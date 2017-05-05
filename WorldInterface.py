@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 # methods that contain this function are considered pure virtual (c++ style)
-def needs_implementation():
+def override_this_method_plz():
     raise "the bar"
 
 class WorldInterface:
@@ -10,12 +10,12 @@ class WorldInterface:
 
     # graphics:
     def draw( self, render_settings={} ):
-        needs_implementation()
+        override_this_method_plz()
 
     # game logic:
-    def update( self, game_state ):
-        needs_implementation()
+    def update( self, game_state={} ):
+        override_this_method_plz()
 
     # when the manager switches to the world: 
-    def onLoad( self, game_state ):
-        needs_implementation()
+    def onLoad( self, game_state={} ):
+        override_this_method_plz()
