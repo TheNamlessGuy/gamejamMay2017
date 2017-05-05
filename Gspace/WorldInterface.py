@@ -6,11 +6,9 @@ def override_this_method_plz():
 
 class WorldInterface:
     def __init__( self ):
-        pass
-
-    # graphics:
-    def draw( self, render_settings={} ):
-        override_this_method_plz()
+        self.background = None
+        self.sprites = []
+        self.render_settings = {}
 
     # game logic:
     def update( self, game_state={} ):
