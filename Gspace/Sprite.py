@@ -18,8 +18,9 @@ def load_image( path ):
 
 # override this class to add features
 class Sprite:
-    def __init__( self, image, pos, size, angle ):
+    def __init__( self, image, pos, size, angle=0.0, z=0 ):
         self.image  = image
         self.pos    = pos
         self.size   = size
         self.angle  = angle
+        self.z      = z
