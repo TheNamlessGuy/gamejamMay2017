@@ -19,3 +19,6 @@ class WorldInterface:
     # when the manager switches to the world: 
     def onLoad( self, game_state={} ):
         override_this_method_plz()
+
+    def onUnload( self, game_state={} ):
+        override_this_method_plz()
