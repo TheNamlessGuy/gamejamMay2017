@@ -12,6 +12,6 @@ def draw_world( world, game_state ):
     
     for sprite in world.sprites:
         rotated = pygame.transform.rotate( sprite.image, sprite.angle )
-        half = rotaded.get_rect()
-        pos = sprite.pos - Vec2( rotated.width, rotated.height ) * 0.5
+        half = rotated.get_rect()
+        pos = sprite.pos - Vec2( half.width, half.height ) * 0.5
         screen.blit( rotated, pos.to_tuple() )
