@@ -40,3 +40,6 @@ class Vec2:
 
     def __imul__( self, other ):
         self = __mul__( self, other )
+
+    def to_tuple( self ):
+        return ( self.x, self.y )

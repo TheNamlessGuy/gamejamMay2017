@@ -2,13 +2,13 @@
 
 from Gspace import WorldInterface, Sprite, load_image, collides_with, Vec2
 from random import randint
-from math import sin, cos
+from math import sin, cos, radians
 
 class SpaceState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
 
-        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (100, 50))
+        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (50, 25))
         self.player = (Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (50, 50)), 2.0) # Sprite, invincibility timer
 
         self.planets = []
@@ -16,8 +16,8 @@ class SpaceState(WorldInterface):
         self.spawn_planets(5)
         self.spawn_meteors(8)
 
-        self.player_speed = 1
-        self.player_rot_speed = 0.5
+        self.player_speed = 10
+        self.player_rot_speed = 5
 
         self.meteor_speed = self.player_speed + 0.5
         self.planet_rot_speed = 0.5
@@ -30,13 +30,13 @@ class SpaceState(WorldInterface):
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
-            self.player[0].pos[0] += self.player_speed * sin(self.player[0].angle)
-            self.player[0].pos[1] += self.player_speed * cos(self.player[0].angle)
+            self.player[0].pos[0] -= self.player_speed * sin(radians(self.player[0].angle))
+            self.player[0].pos[1] -= self.player_speed * cos(radians(self.player[0].angle))
 
         if game_state['keyboard']['ctrl-left']:
-            self.player[0].angle -= self.player_rot_speed
-        if game_state['keyboard']['ctrl-right']:
             self.player[0].angle += self.player_rot_speed
+        if game_state['keyboard']['ctrl-right']:
+            self.player[0].angle -= self.player_rot_speed
 
         # Update meteors + collision
         for meteor in self.meteors:
@@ -67,7 +67,8 @@ class SpaceState(WorldInterface):
         self.sprites.append(self.player[0])
         # Set "Enter planet" prompt to render
         if can_land_on is not None:
-            self.enter_planet.pos = (self.player[0].pos[0], self.player[0].pos[1] - self.player[0].size[1])
+            self.enter_planet.pos[0] = self.player[0].pos[0]
+            self.enter_planet.pos[1] = self.player[0].pos[1] - self.player[0].size[1]
             self.sprites.append(self.enter_planet)
 
     def reset(self, game_state):

@@ -10,4 +10,4 @@ def draw_world( world, game_state ):
     screen.fill( (0,0,0) )
     
     for sprite in world.sprites:
-        screen.blit( sprite.image, sprite.pos )
+        screen.blit( pygame.transform.rotate(sprite.image, sprite.angle), sprite.pos.to_tuple() )
