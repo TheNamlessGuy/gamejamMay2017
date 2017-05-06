@@ -33,6 +33,9 @@ class TransitionCutsceneState(WorldInterface):
     def update(self, game_state):
         self.sprites = []
 
+        if game_state["keyboard"]["ctrl-debug"]:
+            return game_state["world-planet"]
+
         def update_back_y_and_draw(spr, minpos):
             spr.pos.y += self.background_speed
             if spr.pos.y < minpos:
