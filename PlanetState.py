@@ -5,30 +5,24 @@ from Gspace import WorldInterface, Sprite, load_image, Vec2
 class Animator():
     def __init__(self, anims, start_anim, sprite):
         self.anims = anims 
-        self.cur_anim = self.anims[start_anim]
-        self.cur_index = 0
-        self.next = self.cur_anim[1]
         self.target = sprite
-        self.target.image = self.cur_anim[0][self.cur_index]
+        self.do_anim(start_anim)
         
     def anim_update(self):
         self.next -= 1
         
         if self.next <= 0:
             if self.cur_index == len(self.cur_anim[0]) - 1:
-                self.cur_anim = self.anims[self.cur_anim[2]]
-                self.cur_index = 0
+                self.do_anim(self.cur_anim[2])
             else:
                 self.cur_index += 1
                 self.target.image = self.cur_anim[0][self.cur_index]
                 self.next = self.cur_anim[1]
-            
-            self.next = self.cur_anim[1]
-            self.target.image = self.cur_anim[0][self.cur_index]
+                self.target.image = self.cur_anim[0][self.cur_index]
                 
-    def do_anim(self, new_anim):
+    def do_anim(self, new_anim, index=0):
         self.cur_anim = self.anims[new_anim]
-        self.cur_index = 0
+        self.cur_index = index
         self.next = self.cur_anim[1]
         self.target.image = self.cur_anim[0][self.cur_index]
 
