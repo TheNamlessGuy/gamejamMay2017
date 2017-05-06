@@ -33,7 +33,7 @@ class Animator():
         self.target.image = self.cur_anim[0][self.cur_index]
 
 
-class PlanetState(WorldInterface):g
+class PlanetState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
         #load all res
