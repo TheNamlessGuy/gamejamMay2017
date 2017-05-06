@@ -46,7 +46,7 @@ class SpaceState(WorldInterface):
             game_state['camera'].x = self.player[0].pos[0] - 320
             game_state['camera'].y = self.player[0].pos[1] - 240
 
-        self.player[1] -= 1 if self.player[1] != 0 else 0
+        self.player[1] -= 1 if self.player[1] != 0 else 0 # invincibility timer
         if self.player[1] != 0 and self.player[1] % 3 == 0:
             self.player[0].image = None
         elif self.player[0].image == None:
@@ -74,9 +74,8 @@ class SpaceState(WorldInterface):
         can_land_on = None
         for index, planet in enumerate(self.planets):
             planet[0].angle += self.planet_rot_speed
-            if collides_with(self.player[0].pos, self.player[0].size, planet[0].pos, planet[0].size):
+            if collides_with(self.player[0].pos, self.player[0].size, planet[0].pos, planet[0].size) and planet[1]:
                 can_land_on = index
-
 
         # Detect if landing on planet
         if can_land_on is not None and game_state['keyboard']['ctrl-action']:
