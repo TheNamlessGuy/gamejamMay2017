@@ -1,15 +1,9 @@
 #encoding: utf-8
 
 import pygame
-from WorldInterface import WorldInterface
-from Keyboard import Keyboard
-
-#import graphics
-
-#dummy until graphics is implemented
-
-def draw_world( world ):
-    print "no draw implementation yet"
+from WorldInterface import *
+from Graphics import *
+from Keyboard import *
 
 def run_game( world, game_state = {}, fps = 24 ):
 
@@ -41,7 +35,7 @@ def run_game( world, game_state = {}, fps = 24 ):
             continue
 
         # draw to buffer
-        draw_world( world )
+        draw_world( world, game_state )
         # show buffer
         pygame.display.flip()
         # sync
