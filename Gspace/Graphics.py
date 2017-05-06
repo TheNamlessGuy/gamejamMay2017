@@ -3,6 +3,7 @@
 import pygame
 
 from WorldInterface import *
+from Vec2 import *
 
 def draw_world( world, game_state ):
     
@@ -10,4 +11,7 @@ def draw_world( world, game_state ):
     screen.fill( (0,0,0) )
     
     for sprite in world.sprites:
-        screen.blit( pygame.transform.rotate(sprite.image, sprite.angle), sprite.pos.to_tuple() )
+        rotated = pygame.transform.rotate( sprite.image, sprite.angle )
+        half = rotaded.get_rect()
+        pos = sprite.pos - Vec2( rotated.width, rotated.height ) * 0.5
+        screen.blit( rotated, pos.to_tuple() )
