@@ -83,6 +83,13 @@ class PlanetState(WorldInterface):
         self.anims['enemy_boat'] = {}   
         self.anims['enemy_boat']['walk'] = (self.res['enemies'][6:9] + [self.res['enemies'][7]], \
                                             6, 'walk')              
+               
+        #Ticks
+        self.ticks = {}
+        self.ticks['player_attack'] = 0
+        self.ticks['enemy_attack'] = 0
+        self.ticks['enemy_move'] = 0       
+               
                                             
         #BG
         self.bg = (Sprite(None, Vec2(320, 240), (640, 480)))
@@ -107,6 +114,10 @@ class PlanetState(WorldInterface):
         #Clear sprites
         self.sprites[:] = []
         
+        #Do ticks
+        for key in self.ticks:
+            self.ticks[key] -= 1
+        
         #Draw BG
         self.sprites.append(self.bg)
                 
@@ -120,18 +131,17 @@ class PlanetState(WorldInterface):
         if game_state['keyboard']['ctrl-down']:
             pass
         if game_state['keyboard']['ctrl-action']:
-            self.player_animator.do_anim('small_eat')
-            #if player_can_attack and game_state['clock'] >= self.sprites.append(self.player):
-                #DO ATTACK    
-                #self.player_can_attack = False
-                #self.player_next_attack = game_state['clock'] + 0.8
+            if self.player_can_attack and self.ticks['player_attack'] <= 0:  
+                self.player_can_attack = False
+                self.ticks['player_attack'] = 19
+                self.player_animator.do_anim('small_eat')
+        else:
+            self.player_can_attack = True    
+        
+        #Debug win    
         if game_state['keyboard']['ctrl-debug'] and game_state['keyboard']['ctrl-right']:
             game_state['went-well'] = True
             return game_state['world-space']
-        #else:
-            #player_can_attack = True    
-            
-        
             
         #Position legs and draw player    
         self.player_legs.pos = self.player.pos
@@ -162,7 +172,6 @@ class PlanetState(WorldInterface):
         
     def reset(self, game_state):
         #Reset camera
-        
         game_state['camera'].x = 0
         game_state['camera'].y = 0
     
@@ -170,7 +179,7 @@ class PlanetState(WorldInterface):
         self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
-        #stick
+        #Stick
         self.enemy_animator = Animator(self.anims['enemy_stick'], 'walk', self.enemy)
         self.enemy2_animator = Animator(self.anims['enemy_cone'], 'walk', self.enemytemp)
         self.enemy3_animator = Animator(self.anims['enemy_boat'], 'walk', self.enemytemp2)
