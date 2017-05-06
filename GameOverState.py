@@ -6,7 +6,6 @@ class GameOverState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
         self.bg = Sprite(load_image('res/gameover.png'), Vec2(320, 240), (640, 480))
-        self.sprites.append(self.bg)
 
     def update(self, game_state):
         if game_state['keyboard']['ctrl-action']:
@@ -14,4 +13,4 @@ class GameOverState(WorldInterface):
             return game_state['world-space']
 
     def reset(self, game_state):
-        pass
+        self.sprites.append(self.bg)
