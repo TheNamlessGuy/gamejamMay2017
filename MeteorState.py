@@ -20,6 +20,14 @@ class MeteorState(WorldInterface):
             self.player.pos[0] -= self.player_speed * sin(radians(self.player.angle))
             self.player.pos[1] -= self.player_speed * cos(radians(self.player.angle))
 
+            hw = self.player.size[0] // 2
+            hh = self.player.size[1] // 2
+
+            if self.player.pos[0] - hw < 0: self.player.pos[0] = hw
+            if self.player.pos[1] - hh< 0: self.player.pos[1] = hh
+            if self.player.pos[0] + hw > 640: self.player.pos[0] = 640 - hw
+            if self.player.pos[1] + hh > 480: self.player.pos[1] = 480 - hh
+
         if game_state['keyboard']['ctrl-left']:
             self.player.angle += self.player_rot_speed
         if game_state['keyboard']['ctrl-right']:
@@ -29,7 +37,7 @@ class MeteorState(WorldInterface):
         for meteor in reversed(self.meteorites):
             if collides_with(self.player.pos, self.player.size, meteor.pos, meteor.size):
                 game_state['went-well'] = False
-                return game_state['world-space']
+                return game_state['world-gameover']
 
             meteor.pos[1] += self.meteor_speed
             if meteor.pos[1] > 500:
