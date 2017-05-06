@@ -11,7 +11,16 @@ def draw_world( world, game_state ):
     screen.fill( (0,0,0) )
     
     for sprite in world.sprites:
-        rotated = pygame.transform.rotate( sprite.image, sprite.angle )
-        half = rotated.get_rect()
-        pos = sprite.pos - Vec2( half.width, half.height ) * 0.5
+        transformed = pygame.transform.rotate( pygame.transform.scale( sprite.size ), sprite.angle )
+        rect        = transformed.get_rect()
+        pos         = sprite.pos - Vec2( rect.width, rect.height ) * 0.5
+        # TODO: particles...
         screen.blit( rotated, pos.to_tuple() )
+        
+    # TODO: post process
+    screen_rect = screen.get_rect()
+    blur_rect   = ( screen_rect.w / 4, screen_rect.h / 4 )
+    
+    small = pygame.transform.smoothscale( screen, blur_rect )
+    pygame.transform.smoothscale( small, ( screen_rect.w, screen_rect.h ), screen )
+    
