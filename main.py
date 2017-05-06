@@ -15,4 +15,5 @@ if __name__ == '__main__':
     game_state['world-gameover'] = GameOverState()
     game_state['world-cutscene'] = {'falling': TransitionCutsceneState()}
     game_state['camera'] = Vec2( 0.0, 0.0 )
+    game_state['spoon-pwr'] = 0
     run_game( game_state['world-space'], game_state, 24 )
