@@ -16,7 +16,9 @@ def run_game( world, game_state = {}, fps = 24 ):
 
     screen = pygame.display.set_mode((640, 480))
     back_colour = ( 255, 0, 0 )
-    background = pygame.Surface( screen.get_size() ).fill( back_colour ).convert()
+    background = pygame.Surface( screen.get_size() )
+    background.fill( back_colour )
+    background = background.convert()
     owl = (0,0)
     screen.blit( background, owl )
     

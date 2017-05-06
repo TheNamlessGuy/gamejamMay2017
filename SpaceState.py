@@ -9,7 +9,7 @@ class SpaceState(WorldInterface):
         WorldInterface.__init__(self)
 
         self.enter_planet = Sprite(load_image("res/enterplanet.png"), (0, 0), (100, 50))
-        self.player = (Sprite(load_image("res/player_ship.png"), (320, 240), (50, 50)), 10) # Sprite, invincibility timer
+        self.player = (Sprite(load_image("res/spaceship2.png"), (320, 240), (50, 50)), 10) # Sprite, invincibility timer
 
         self.planets = []
         self.spawn_planets(5)
