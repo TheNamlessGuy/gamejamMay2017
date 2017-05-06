@@ -81,24 +81,32 @@ class PlanetState(WorldInterface):
         self.anims['player_legs'] = {}
         self.anims['player_legs']['legs_walk'] = (self.res['player'][12:14], 10, 'legs_walk')
         self.anims['enemy_stick'] = {}
-        self.anims['enemy_stick']['walk'] = (self.res['enemies'][0:2], 6, 'walk')
+        self.anims['enemy_stick']['walk'] = (self.res['enemies'][0:2], 8, 'walk')
         self.anims['enemy_cone'] = {}
-        self.anims['enemy_boat'] = {}                 
+        self.anims['enemy_cone']['walk'] = (self.res['enemies'][2:4], 8, 'open')
+        self.anims['enemy_cone']['open'] = (self.res['enemies'][4:6], 8, 'walk')
+        self.anims['enemy_boat'] = {}   
+        self.anims['enemy_boat']['walk'] = (self.res['enemies'][6:9] + [self.res['enemies'][7]], \
+                                            6, 'walk')              
+                                            
         #BG
-        self.bg = (Sprite(load_image("res/onplanet1.png"), Vec2(320, 240), (640, 480)))
+        self.bg = (Sprite(None, Vec2(320, 240), (640, 480)))
         
         #Player
-        self.player = (Sprite(load_image("res/player_small_body_walk1.png"), Vec2(150, 320), (100, 62)))
-        self.player_legs = (Sprite(load_image("res/player_legs1.png"), Vec2(200, 360), (100, 62)))
+        self.player = (Sprite(None, Vec2(150, 320), (100, 62)))
+        self.player_legs = (Sprite(None, Vec2(200, 360), (100, 62)))
         self.player_speed = 1
         self.player_can_attack = True
         self.player_next_attack = 0
         
         #Enemy
-        self.enemy = (Sprite(load_image("res/icecreamstick1.png"), Vec2(460, 320), (80, 100))) 
+        self.enemy = (Sprite(None, Vec2(460, 320), (80, 100))) 
         self.enemy_direction = 0
         self.enemy_next_dir = 0
         self.enemy_speed = 1
+        
+        self.enemytemp = (Sprite(None, Vec2(150, 120), (80, 100))) 
+        self.enemytemp2 = (Sprite(None, Vec2(300, 240), (80, 58))) 
 
     def update(self, game_state):
         #Clear sprites
@@ -133,6 +141,9 @@ class PlanetState(WorldInterface):
         self.player_animator.anim_update()
         self.plegs_animator.anim_update()
         self.enemy_animator.anim_update()
+        self.enemy2_animator.anim_update()
+        self.enemy3_animator.anim_update()
+        
         
         self.sprites.append(self.player)
         self.sprites.append(self.player_legs)
@@ -147,6 +158,9 @@ class PlanetState(WorldInterface):
         
         #Draw Enemy   
         self.sprites.append(self.enemy)
+        self.sprites.append(self.enemytemp)
+        self.sprites.append(self.enemytemp2)
+        
         
     def reset(self, game_state):
         #Reset camera
@@ -160,6 +174,8 @@ class PlanetState(WorldInterface):
         
         #stick
         self.enemy_animator = Animator(self.anims['enemy_stick'], 'walk', self.enemy)
+        self.enemy2_animator = Animator(self.anims['enemy_cone'], 'walk', self.enemytemp)
+        self.enemy3_animator = Animator(self.anims['enemy_boat'], 'walk', self.enemytemp2)
         
         #reset state vars
     
