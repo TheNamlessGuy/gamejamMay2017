@@ -31,13 +31,13 @@ class SpaceState(WorldInterface):
         new_state = None
 
         # Update player
-        if game_state['ctrl-up']:
+        if game_state['keyboard']['ctrl-up']:
             self.player.pos[0] += self.player_speed * sin(self.player.angle)
             self.player.pos[1] += self.player_speed * cos(self.player.angle)
 
-        if game_state['ctrl-left']:
+        if game_state['keyboard']['ctrl-left']:
             self.player.angle -= self.player_rot_speed
-        if game_state['ctrl-right']:
+        if game_state['keyboard']['ctrl-right']:
             self.player.angle += self.player_rot_speed
 
         # Update meteors + collision
@@ -62,7 +62,7 @@ class SpaceState(WorldInterface):
 
 
         # Detect if landing on planet
-        if can_land_on is not None and game_state['ctrl-space']:
+        if can_land_on is not None and game_state['keyboard']['ctrl-action']:
             self.current_planet = can_land_on
             return game_state['world-planet']
 

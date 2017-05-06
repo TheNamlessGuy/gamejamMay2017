@@ -1,10 +1,16 @@
 #encoding: utf-8
 
 from Gspace import *
+from SpaceState import SpaceState
+#from PlanetState import PlanetState
+#from MeteorState import MeteorState
 
 if __name__ == '__main__':
     game_state = {}
-    world = None # (Macs) TODO: fixa denna rad!!!
+    game_state['world-space'] = SpaceState()
+    #game_state['world-planet'] = PlanetState()
+    #game_state['world-meteor'] = MeteorState()
+    world = game_state['world-space']
     run_game( world, game_state, 24 )
 
 """
