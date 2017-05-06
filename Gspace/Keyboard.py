@@ -4,10 +4,10 @@ class Keyboard:
     def __init__(self, pygame):
         self.keys_down = {}
 
-        self.up_keys = [pygame.K_UP]
-        self.down_keys = [pygame.K_DOWN]
-        self.left_keys = [pygame.K_LEFT]
-        self.right_keys = [pygame.K_RIGHT]
+        self.up_keys = [pygame.K_UP, pygame.K_w]
+        self.down_keys = [pygame.K_DOWN, pygame.K_s]
+        self.left_keys = [pygame.K_LEFT, pygame.K_a]
+        self.right_keys = [pygame.K_RIGHT, pygame.K_d]
         self.action_keys = [pygame.K_SPACE]
 
         self.keys_down['ctrl-up'] = 0
