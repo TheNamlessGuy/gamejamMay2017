@@ -15,6 +15,7 @@ class Keyboard:
         self.keys_down['ctrl-left'] = 0
         self.keys_down['ctrl-right'] = 0
         self.keys_down['ctrl-action'] = 0
+        self.keys_down['ctrl-debug'] = 0
 
     def update(self, pygame):
         for event in pygame.event.get():
@@ -31,6 +32,8 @@ class Keyboard:
                 self.keys_down['ctrl-right'] += 1 if event.type == pygame.KEYDOWN else -1
             elif event.key in self.action_keys:
                 self.keys_down['ctrl-action'] += 1 if event.type == pygame.KEYDOWN else -1
+            elif event.key == pygame.K_KP1:
+                self.keys_down['ctrl-debug'] += 1 if event.type == pygame.KEYDOWN else -1
 
         return True
 
