@@ -131,6 +131,9 @@ class PlanetState(WorldInterface):
                 #DO ATTACK    
                 #self.player_can_attack = False
                 #self.player_next_attack = game_state['clock'] + 0.8
+        if game_state['keyboard']['ctrl-debug'] and game_state['keyboard']['ctrl-right']:
+            game_state['went-well'] = True
+            return game_state['world-space']
         #else:
             #player_can_attack = True    
             
