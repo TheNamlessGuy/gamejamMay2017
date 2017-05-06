@@ -5,10 +5,13 @@ from Gspace import WorldInterface, Sprite, load_image, Vec2
 class GameOverState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
-        pass
+        self.bg = Sprite(load_image('res/gameover.png'), Vec2(320, 240), (640, 480))
+        self.sprites.append(self.bg)
 
     def update(self, game_state):
-        pass
+        if game_state['keyboard']['ctrl-action']:
+            game_state['hard-reset'] = True
+            return game_state['world-space']
 
     def reset(self, game_state):
         pass
