@@ -1,6 +1,6 @@
 #encoding: utf-8
 
-from Gspace import WorldInterface, Sprite, load_image, collides_with
+from Gspace import WorldInterface, Sprite, load_image, collides_with, Vec2
 from random import randint
 from math import sin, cos
 
@@ -8,8 +8,8 @@ class SpaceState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
 
-        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), (0, 0), (100, 50))
-        self.player = (Sprite(load_image("res/spaceship2.png"), (320, 240), (50, 50)), 10) # Sprite, invincibility timer
+        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (100, 50))
+        self.player = (Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (50, 50)), 10) # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -31,13 +31,13 @@ class SpaceState(WorldInterface):
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
-            self.player.pos[0] += self.player_speed * sin(self.player.angle)
-            self.player.pos[1] += self.player_speed * cos(self.player.angle)
+            self.player[0].pos[0] += self.player_speed * sin(self.player[0].angle)
+            self.player[0].pos[1] += self.player_speed * cos(self.player[0].angle)
 
         if game_state['keyboard']['ctrl-left']:
-            self.player.angle -= self.player_rot_speed
+            self.player[0].angle -= self.player_rot_speed
         if game_state['keyboard']['ctrl-right']:
-            self.player.angle += self.player_rot_speed
+            self.player[0].angle += self.player_rot_speed
 
         # Update meteors + collision
         for meteor in self.meteors:
@@ -102,7 +102,7 @@ class SpaceState(WorldInterface):
         loop = True
         pos = None
         while loop:
-            pos = (randint(0, 1920), randint(0, 1080))
+            pos = Vec2(randint(0, 1920), randint(0, 1080))
             loop = False
 
             if collides_with(pos, size, self.player[0].pos, self.player[0].size):

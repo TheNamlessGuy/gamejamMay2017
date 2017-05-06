@@ -5,12 +5,13 @@ class Keyboard:
         self.keys_down = {}
 
         self.up_keys = [pygame.K_UP]
+        self.down_keys = [pygame.K_DOWN]
         self.left_keys = [pygame.K_LEFT]
         self.right_keys = [pygame.K_RIGHT]
         self.action_keys = [pygame.K_SPACE]
 
-
         self.keys_down['ctrl-up'] = 0
+        self.keys_down['ctrl-down'] = 0
         self.keys_down['ctrl-left'] = 0
         self.keys_down['ctrl-right'] = 0
         self.keys_down['ctrl-action'] = 0
@@ -19,14 +20,16 @@ class Keyboard:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: return False
 
-            if event.type != pygame.KEYDOWN or event.type != pygame.KEYUP: continue
+            if event.type != pygame.KEYDOWN and event.type != pygame.KEYUP: continue
             if event.key in self.up_keys:
                 self.keys_down['ctrl-up'] += 1 if event.type == pygame.KEYDOWN else -1
-            if event.key in self.left_keys:
+            elif event.key in self.down_keys:
+                self.keys_down['ctrl-down'] += 1 if event.type == pygame.KEYDOWN else -1
+            elif event.key in self.left_keys:
                 self.keys_down['ctrl-left'] += 1 if event.type == pygame.KEYDOWN else -1
-            if event.key in self.right_keys:
+            elif event.key in self.right_keys:
                 self.keys_down['ctrl-right'] += 1 if event.type == pygame.KEYDOWN else -1
-            if event.key in self.action_keys:
+            elif event.key in self.action_keys:
                 self.keys_down['ctrl-action'] += 1 if event.type == pygame.KEYDOWN else -1
 
         return True
