@@ -7,9 +7,11 @@ from math import sin, cos, radians
 class SpaceState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
+        self.world_size = (1920, 1080)
 
+        self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
-        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (80, 80)), 2.0] # Sprite, invincibility timer
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (80, 80)), 48] # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -20,7 +22,7 @@ class SpaceState(WorldInterface):
         self.player_rot_speed = 5
 
         self.meteor_speed = self.player_speed + 0.5
-        self.planet_rot_speed = 0.1
+        self.planet_rot_speed = 0.3
 
         self.current_planet = None
         self.collided_meteor = False
@@ -28,17 +30,27 @@ class SpaceState(WorldInterface):
     def update(self, game_state):
         if len(self.sprites) == 0: self.set_sprites()
 
-        if game_state['keyboard']['ctrl-debug']:
-            return game_state['world-meteor']
+        #if game_state['keyboard']['ctrl-debug']:
+        #    return game_state['world-meteor']
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
-            x_offset = self.player_speed * sin(radians(self.player[0].angle))
-            y_offset = self.player_speed * cos(radians(self.player[0].angle))
-            self.player[0].pos[0] -= x_offset#self.player_speed * sin(radians(self.player[0].angle))
-            self.player[0].pos[1] -= y_offset#self.player_speed * cos(radians(self.player[0].angle))
-            game_state['camera'].x -= x_offset
-            game_state['camera'].y -= y_offset
+            self.player[0].pos[0] -= self.player_speed * sin(radians(self.player[0].angle))
+            self.player[0].pos[1] -= self.player_speed * cos(radians(self.player[0].angle))
+
+            if self.player[0].pos[0] < 0: self.player[0].pos[0] = 0
+            if self.player[0].pos[1] < 0: self.player[0].pos[1] = 0
+            if self.player[0].pos[0] > self.world_size[0]: self.player[0].pos[0] = self.world_size[0]
+            if self.player[0].pos[1] > self.world_size[1]: self.player[0].pos[1] = self.world_size[1]
+
+            game_state['camera'].x = self.player[0].pos[0] - 320
+            game_state['camera'].y = self.player[0].pos[1] - 240
+
+        self.player[1] -= 1 if self.player[1] != 0 else 0
+        if self.player[1] != 0 and self.player[1] % 3 == 0:
+            self.player[0].image = None
+        elif self.player[0].image == None:
+            self.player[0].image = load_image('res/spaceship2.png')
 
         if game_state['keyboard']['ctrl-left']:
             self.player[0].angle += self.player_rot_speed
@@ -47,8 +59,14 @@ class SpaceState(WorldInterface):
 
         # Update meteors + collision
         for meteor in self.meteors:
-            if collides_with(self.player[0].pos, self.player[0].size, meteor.pos, meteor.size):
+            if collides_with(self.player[0].pos, self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
                 self.collided_meteor = True
+            meteor[0].pos = meteor[0].pos - (meteor[1] * self.meteor_speed)
+            meteor[2] -= 1
+            if meteor[2] == 0:
+                meteor[1].x = randint(-1, 1)
+                meteor[1].y = randint(-1, 1)
+                meteor[2] = randint(5, 10)
 
         if self.collided_meteor: return game_state['world-meteor']
 
@@ -68,32 +86,36 @@ class SpaceState(WorldInterface):
         
         # Set "Enter planet" prompt to render
         if can_land_on is not None:
+            self.enter_planet.image = load_image('res/press_space_to_continue1.png')
             self.enter_planet.pos[0] = self.player[0].pos[0]
             self.enter_planet.pos[1] = self.player[0].pos[1] - self.player[0].size[1]
         else:
-            self.enter_planet.pos[0] = -1000
-            self.enter_planet.pos[1] = -1000
+            self.enter_planet.image = None
 
     def reset(self, game_state):
         if self.current_planet is not None:
             if 'went-well' in game_state and game_state['went-well']:
                 self.planets[self.current_planet][1] = False
             else:
-                self.player[1] = 2.0
+                self.player[1] = 48
             self.current_planet = None
 
         if self.collided_meteor:
-            self.player[1] = 2.0
+            self.player[1] = 48
             self.collided_meteor = False
+
+        game_state['camera'].x = self.player[0].pos[0] - 320
+        game_state['camera'].y = self.player[0].pos[1] - 240
 
         self.set_sprites()
 
     def set_sprites(self):
         self.sprites[:] = []
+        self.sprites.append(self.bg)
         for planet in self.planets:
             self.sprites.append(planet[0])
         for meteor in self.meteors:
-            self.sprites.append(meteor)
+            self.sprites.append(meteor[0])
         self.sprites.append(self.player[0])
         self.sprites.append(self.enter_planet)
 
@@ -106,17 +128,17 @@ class SpaceState(WorldInterface):
             self.planets.append([sprite, True, rand]) # Sprite, isEnterable, type
 
     def spawn_meteors(self, amount):
-        return
         self.meteors[:] = [] # Clear meteors (just in case)
         size = (25, 25)
         for i in range(amount):
-            self.meteors.append(Sprite(load_image('res/meteor.png'), self.random_pos(size), size))
+            sprite = Sprite(load_image('res/asteroid' + str(randint(1, 4)) +'.png'), self.random_pos(size), size)
+            self.meteors.append([sprite, Vec2(randint(-1, 1), randint(-1, 1)), randint(5, 10)]) # Sprite, move direction, time to move
 
     def random_pos(self, size):
         loop = True
         pos = None
         while loop:
-            pos = Vec2(randint(0, 1920), randint(0, 1080))
+            pos = Vec2(randint(0, self.world_size[0]), randint(0, self.world_size[1]))
             loop = False
 
             if collides_with(pos, size, self.player[0].pos, self.player[0].size):
@@ -131,7 +153,7 @@ class SpaceState(WorldInterface):
             if loop: continue
 
             for meteor in self.meteors:
-                if collides_with(pos, size, planet.pos, planet.size):
+                if collides_with(pos, size, meteor[0].pos, meteor[0].size):
                     loop = True
                     break
         return pos
