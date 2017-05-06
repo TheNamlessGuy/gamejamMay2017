@@ -1,0 +1,30 @@
+#encoding: utf-8
+
+import WorldInterface
+
+#import graphics
+
+#dummy until graphics is implemented
+
+def draw_world( world ):
+    pass
+
+def run_game( world, game_state = {}, fps = 24 ):
+    
+    timer = pygame.time.Clock()
+    world.reset()
+    
+    ret = None
+    while ret == None:
+        ret = WorldInterface.update( world, game_state )
+        if isinstance( ret, WorldInterface ):
+            world = ret
+            ret = None
+            world.reset( game_state )
+        
+        # draw to buffer
+        draw_world( world )
+        # show buffer
+        pygame.display.flip()
+        # sync
+        timer.tick( fps )
