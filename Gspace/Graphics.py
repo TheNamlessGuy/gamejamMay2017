@@ -13,7 +13,8 @@ def draw_world( world, game_state ):
     for sprite in world.sprites:
         transformed = pygame.transform.rotate( pygame.transform.scale( sprite.image, sprite.size ), sprite.angle )
         rect        = transformed.get_rect()
-        pos         = sprite.pos - Vec2( rect.width, rect.height ) * 0.5
+        pos         = sprite.pos - Vec2( rect.width, rect.height ) * 0.5 - game_state['camera']
+        #pos         = pos - game_state["camera"]
         # TODO: particles...
         screen.blit( transformed, pos.to_tuple() )
         

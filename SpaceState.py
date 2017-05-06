@@ -8,8 +8,8 @@ class SpaceState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
 
-        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (50, 25))
-        self.player = (Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (50, 50)), 2.0) # Sprite, invincibility timer
+        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (80, 80)), 2.0] # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -20,18 +20,25 @@ class SpaceState(WorldInterface):
         self.player_rot_speed = 5
 
         self.meteor_speed = self.player_speed + 0.5
-        self.planet_rot_speed = 0.5
+        self.planet_rot_speed = 0.1
 
         self.current_planet = None
         self.collided_meteor = False
 
     def update(self, game_state):
-        self.sprites[:] = [] # Clear sprites
+        if len(self.sprites) == 0: self.set_sprites()
+
+        if game_state['keyboard']['ctrl-debug']:
+            return game_state['world-meteor']
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
-            self.player[0].pos[0] -= self.player_speed * sin(radians(self.player[0].angle))
-            self.player[0].pos[1] -= self.player_speed * cos(radians(self.player[0].angle))
+            x_offset = self.player_speed * sin(radians(self.player[0].angle))
+            y_offset = self.player_speed * cos(radians(self.player[0].angle))
+            self.player[0].pos[0] -= x_offset#self.player_speed * sin(radians(self.player[0].angle))
+            self.player[0].pos[1] -= y_offset#self.player_speed * cos(radians(self.player[0].angle))
+            game_state['camera'].x -= x_offset
+            game_state['camera'].y -= y_offset
 
         if game_state['keyboard']['ctrl-left']:
             self.player[0].angle += self.player_rot_speed
@@ -42,8 +49,6 @@ class SpaceState(WorldInterface):
         for meteor in self.meteors:
             if collides_with(self.player[0].pos, self.player[0].size, meteor.pos, meteor.size):
                 self.collided_meteor = True
-            # TODO: if collides with camera
-            self.sprites.append(meteor)
 
         if self.collided_meteor: return game_state['world-meteor']
 
@@ -54,26 +59,24 @@ class SpaceState(WorldInterface):
             if collides_with(self.player[0].pos, self.player[0].size, planet[0].pos, planet[0].size):
                 can_land_on = index
 
-            # TODO: if collides with camera
-            self.sprites.append(planet[0])
-
 
         # Detect if landing on planet
         if can_land_on is not None and game_state['keyboard']['ctrl-action']:
             self.current_planet = can_land_on
+            game_state['identifier'] = self.planets[can_land_on][2]
             return game_state['world-planet']
-
-        # Set player to render
-        self.sprites.append(self.player[0])
+        
         # Set "Enter planet" prompt to render
         if can_land_on is not None:
             self.enter_planet.pos[0] = self.player[0].pos[0]
             self.enter_planet.pos[1] = self.player[0].pos[1] - self.player[0].size[1]
-            self.sprites.append(self.enter_planet)
+        else:
+            self.enter_planet.pos[0] = -1000
+            self.enter_planet.pos[1] = -1000
 
     def reset(self, game_state):
         if self.current_planet is not None:
-            if game_state['went-well']:
+            if 'went-well' in game_state and game_state['went-well']:
                 self.planets[self.current_planet][1] = False
             else:
                 self.player[1] = 2.0
@@ -83,12 +86,24 @@ class SpaceState(WorldInterface):
             self.player[1] = 2.0
             self.collided_meteor = False
 
+        self.set_sprites()
+
+    def set_sprites(self):
+        self.sprites[:] = []
+        for planet in self.planets:
+            self.sprites.append(planet[0])
+        for meteor in self.meteors:
+            self.sprites.append(meteor)
+        self.sprites.append(self.player[0])
+        self.sprites.append(self.enter_planet)
+
     def spawn_planets(self, amount):
         self.planets[:] = [] # Clear planets (just in case)
         size = (50, 50)
         for i in range(amount):
-            sprite = Sprite(load_image("res/planet" + str(randint(1, 3)) + ".png"), self.random_pos(size), size)
-            self.planets.append((sprite, True)) # Sprite, isEnterable
+            rand = randint(1, 4)
+            sprite = Sprite(load_image("res/planet" + str(rand) + ".png"), self.random_pos(size), size)
+            self.planets.append([sprite, True, rand]) # Sprite, isEnterable, type
 
     def spawn_meteors(self, amount):
         return
