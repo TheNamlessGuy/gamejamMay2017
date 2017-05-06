@@ -9,7 +9,7 @@ class SpaceState(WorldInterface):
         WorldInterface.__init__(self)
 
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (100, 50))
-        self.player = (Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (50, 50)), 10) # Sprite, invincibility timer
+        self.player = (Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (50, 50)), 2.0) # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -27,7 +27,6 @@ class SpaceState(WorldInterface):
 
     def update(self, game_state):
         self.sprites[:] = [] # Clear sprites
-        new_state = None
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
@@ -43,11 +42,10 @@ class SpaceState(WorldInterface):
         for meteor in self.meteors:
             if collides_with(self.player[0].pos, self.player[0].size, meteor.pos, meteor.size):
                 self.collided_meteor = True
-                new_state = game_state['world-meteor']
             # TODO: if collides with camera
             self.sprites.append(meteor)
 
-        if new_state is not None: return new_state
+        if self.collided_meteor: return game_state['world-meteor']
 
         # Update planets, detect if close to landable planet
         can_land_on = None
@@ -77,11 +75,11 @@ class SpaceState(WorldInterface):
             if game_state['went-well']:
                 self.planets[self.current_planet][1] = False
             else:
-                self.player[1] = 10
+                self.player[1] = 2.0
             self.current_planet = None
 
         if self.collided_meteor:
-            self.player[1] = 10
+            self.player[1] = 2.0
             self.collided_meteor = False
 
     def spawn_planets(self, amount):
