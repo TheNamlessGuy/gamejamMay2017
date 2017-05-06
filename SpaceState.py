@@ -93,6 +93,11 @@ class SpaceState(WorldInterface):
             self.enter_planet.image = None
 
     def reset(self, game_state):
+        if 'hard-reset' in game_state and game_state['hard-reset']:
+            self.__init__()
+            game_state['hard-reset'] = False
+            return
+
         if self.current_planet is not None:
             if 'went-well' in game_state and game_state['went-well']:
                 self.planets[self.current_planet][1] = False
@@ -123,7 +128,7 @@ class SpaceState(WorldInterface):
         self.planets[:] = [] # Clear planets (just in case)
         size = (50, 50)
         for i in range(amount):
-            rand = randint(1, 4)
+            rand = randint(1, 5)
             sprite = Sprite(load_image("res/planet" + str(rand) + ".png"), self.random_pos(size), size)
             self.planets.append([sprite, True, rand]) # Sprite, isEnterable, type
 
