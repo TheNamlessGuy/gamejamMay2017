@@ -57,3 +57,5 @@ class TransitionCutsceneState(WorldInterface):
     def reset(self, game_state):
         game_state["camera"].x = 0
         game_state["camera"].y = 0
+        self.flyer_pos.x = 320
+        self.flyer_pos.y = -31
