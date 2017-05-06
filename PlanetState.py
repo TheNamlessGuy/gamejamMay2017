@@ -41,7 +41,8 @@ class PlanetState(WorldInterface):
         self.res['bgs'] = [load_image("res/onplanet1.png"), \
                            load_image("res/onplanet2.png"), \
                            load_image("res/onplanet3.png"), \
-                           load_image("res/onplanet4.png")]
+                           load_image("res/onplanet4.png"),
+                           load_image("res/onplanet5.png")]
         
         self.res['player'] = [load_image("res/player_small_body_walk1.png"), \
                               load_image("res/player_small_body_walk2.png"), \
