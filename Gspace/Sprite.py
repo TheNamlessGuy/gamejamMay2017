@@ -2,19 +2,19 @@
 
 import pygame
 
-sprite_db = {}
+__sprite_db = {}
 
 def load_image( path ):
     global sprite_db
 
-    if not path in sprite_db.keys():
+    if not path in __sprite_db.keys():
         # crashes if the path is invalid
         sprite = pygame.image.load( path )
         # otherwise, it will be inserted to db here
-        sprite_db[ path ] = sprite
+        __sprite_db[ path ] = sprite
         return sprite
     else:
-        return sprite[ path ]
+        return __sprite_db[ path ]
 
 # override this class to add features
 class Sprite:

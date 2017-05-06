@@ -8,13 +8,12 @@ class SpaceState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
 
-        self.enter_planet = Sprite(load_image("res/enterplanet.png"), (0, 0), (100, 50))
+        self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), (0, 0), (100, 50))
         self.player = (Sprite(load_image("res/spaceship2.png"), (320, 240), (50, 50)), 10) # Sprite, invincibility timer
 
         self.planets = []
-        self.spawn_planets(5)
-
         self.meteors = []
+        self.spawn_planets(5)
         self.spawn_meteors(8)
 
         self.player_speed = 1
@@ -86,11 +85,10 @@ class SpaceState(WorldInterface):
             self.collided_meteor = False
 
     def spawn_planets(self, amount):
-        return
         self.planets[:] = [] # Clear planets (just in case)
         size = (50, 50)
         for i in range(amount):
-            sprite = Sprite(load_image("res/planet" + str(randint(0, 3)) + ".png"), self.random_pos(size), size)
+            sprite = Sprite(load_image("res/planet" + str(randint(1, 3)) + ".png"), self.random_pos(size), size)
             self.planets.append((sprite, True)) # Sprite, isEnterable
 
     def spawn_meteors(self, amount):
@@ -102,11 +100,12 @@ class SpaceState(WorldInterface):
 
     def random_pos(self, size):
         loop = True
+        pos = None
         while loop:
             pos = (randint(0, 1920), randint(0, 1080))
             loop = False
 
-            if collides_with(pos, size, self.player.pos, self.player.size):
+            if collides_with(pos, size, self.player[0].pos, self.player[0].size):
                 loop = True
                 continue
 
@@ -121,3 +120,4 @@ class SpaceState(WorldInterface):
                 if collides_with(pos, size, planet.pos, planet.size):
                     loop = True
                     break
+        return pos
