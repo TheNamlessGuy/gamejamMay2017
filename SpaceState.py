@@ -82,7 +82,7 @@ class SpaceState(WorldInterface):
         if can_land_on is not None and game_state['keyboard']['ctrl-action']:
             self.current_planet = can_land_on
             game_state['identifier'] = self.planets[can_land_on][2]
-            return game_state['world-planet']
+            return game_state['world-cutscene']['falling']
         
         # Set "Enter planet" prompt to render
         if can_land_on is not None:

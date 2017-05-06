@@ -5,6 +5,7 @@ from SpaceState import *
 from PlanetState import *
 from MeteorState import *
 from GameOverState import *
+from TransitionCutsceneState import *
 
 if __name__ == '__main__':
     game_state = {}
@@ -12,5 +13,6 @@ if __name__ == '__main__':
     game_state['world-planet'] = PlanetState()
     game_state['world-meteor'] = MeteorState()
     game_state['world-gameover'] = GameOverState()
+    game_state['world-cutscene'] = {'falling': TransitionCutsceneState()}
     game_state['camera'] = Vec2( 0.0, 0.0 )
     run_game( game_state['world-space'], game_state, 24 )
