@@ -79,15 +79,22 @@ class SpaceState(WorldInterface):
             planet[0].angle += self.planet_rot_speed
             if collides_with(self.player[0].pos, self.player[0].size, planet[0].pos, planet[0].size) and planet[1]:
                 can_land_on = index
+
+        # Boss planet
         self.boss_planet[0].angle += self.boss_planet[1]
         self.boss_planet[0].pos = self.boss_planet[0].pos + self.random_dir() * 2
+        if game_state['spoon-pwr'] >= 5 and collides_with(self.player[0].pos, self.player[0].size, self.boss_planet[0].pos, self.boss_planet[0].size):
+            can_land_on = -1
 
         # Detect if landing on planet
         if can_land_on is not None and game_state['keyboard']['ctrl-action']:
             self.current_planet = can_land_on
-            game_state['identifier'] = self.planets[can_land_on][2]
-            return game_state['world-cutscene']['falling']
-        
+            if can_land_on != -1:
+                game_state['identifier'] = self.planets[can_land_on][2]
+                return game_state['world-cutscene']['falling']
+            else:
+                return game_state['world-cutscene']['end']
+
         # Set "Enter planet" prompt to render
         if can_land_on is not None:
             if self.enter_planet.image is None: self.enter_planet.image = load_image('res/press_space_to_continue1.png')

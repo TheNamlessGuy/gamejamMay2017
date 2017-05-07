@@ -11,9 +11,6 @@ class SplashState(WorldInterface):
     def update(self, game_state):
         if len(self.sprites) == 0: self.reset(game_state)
 
-        if game_state['keyboard']['ctrl-action']:
-            return game_state['world-space']
-
         self.load_bar.pos[0] += 13
         self.load_bar.size[0] += 26
         if self.load_bar.size[0] >= 440:
