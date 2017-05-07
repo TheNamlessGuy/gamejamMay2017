@@ -12,7 +12,7 @@ class SpaceState(WorldInterface):
         self.bg = Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
         self.boss_planet = (Sprite(load_image('res/planet_final.png'), Vec2((self.world_size[0] // 2) + 250, (self.world_size[1] // 2) - 150), (200, 200)), 0.5)
-        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 999999999] # Sprite, invincibility timer
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48] # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
