@@ -300,7 +300,7 @@ class PlanetState(WorldInterface):
             enemy['next_dir'] = 0
             enemy['speed'] = 7.0
             enemy['type'] = 1 
-            enemy['hp'] = 5
+            enemy['hp'] = 2
             enemy['important'] = True
             enemy['stuck'] = False
             enemy['stuck_time'] = 0
@@ -314,7 +314,7 @@ class PlanetState(WorldInterface):
             enemy['next_dir'] = 0
             enemy['speed'] = 6.0
             enemy['type'] = 2
-            enemy['hp'] = 5
+            enemy['hp'] = 2
             enemy['important'] = True
             enemy['stuck'] = False
             enemy['stuck_time'] = 0
@@ -329,7 +329,7 @@ class PlanetState(WorldInterface):
             enemy['next_boat'] = 40
             enemy['speed'] = 2.0
             enemy['type'] = 3
-            enemy['hp'] = 5
+            enemy['hp'] = 2
             enemy['important'] = True
             enemy['stuck'] = False
             enemy['stuck_time'] = 0
@@ -343,7 +343,7 @@ class PlanetState(WorldInterface):
             enemy['next_dir'] = 0
             enemy['speed'] = 6.0
             enemy['type'] = 4
-            enemy['hp'] = 5
+            enemy['hp'] = 1
             enemy['important'] = False
             enemy['stuck'] = False
             enemy['stuck_time'] = 0
