@@ -20,9 +20,9 @@ def draw_world( world, game_state ):
         screen.blit( transformed, pos.to_tuple() )
         
     # TODO: post process
-    screen_rect = screen.get_rect()
-    blur_rect   = ( screen_rect.w // 2, screen_rect.h // 2 )
-    
-    #small = pygame.transform.smoothscale( screen, blur_rect )
-    #pygame.transform.smoothscale( small, ( screen_rect.w, screen_rect.h ), screen )
-    
+    if game_state["blur"]:
+        screen_rect = screen.get_rect()
+        blur_rect   = ( screen_rect.w // 2, screen_rect.h // 2 )
+        small = pygame.transform.smoothscale( screen, blur_rect )
+        pygame.transform.smoothscale( small, ( screen_rect.w, screen_rect.h ), screen )
+        
