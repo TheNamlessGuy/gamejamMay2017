@@ -8,7 +8,7 @@ class MeteorState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
         self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))
-        self.player = Sprite(load_image('res/spaceship2.png'), Vec2(320, 400), (60, 60))
+        self.player = [Sprite(load_image('res/spaceship2.png'), Vec2(320, 400), (60, 60)), True, 4]
         self.meteorites = []
 
         self.generate_meteorite_waves(randint(5, 10))
@@ -21,25 +21,34 @@ class MeteorState(WorldInterface):
             self.meteorites[:] = []
 
         if game_state['keyboard']['ctrl-up']:
-            self.player.pos[0] -= self.player_speed * sin(radians(self.player.angle))
-            self.player.pos[1] -= self.player_speed * cos(radians(self.player.angle))
+            self.player[0].pos[0] -= self.player_speed * sin(radians(self.player[0].angle))
+            self.player[0].pos[1] -= self.player_speed * cos(radians(self.player[0].angle))
 
-            hw = self.player.size[0] // 2
-            hh = self.player.size[1] // 2
+            hw = self.player[0].size[0] // 2
+            hh = self.player[0].size[1] // 2
 
-            if self.player.pos[0] - hw < 0: self.player.pos[0] = hw
-            if self.player.pos[1] - hh < 0: self.player.pos[1] = hh
-            if self.player.pos[0] + hw > 640: self.player.pos[0] = 640 - hw
-            if self.player.pos[1] + hh > 480: self.player.pos[1] = 480 - hh
+            if self.player[0].pos[0] - hw < 0: self.player[0].pos[0] = hw
+            if self.player[0].pos[1] - hh < 0: self.player[0].pos[1] = hh
+            if self.player[0].pos[0] + hw > 640: self.player[0].pos[0] = 640 - hw
+            if self.player[0].pos[1] + hh > 480: self.player[0].pos[1] = 480 - hh
 
         if game_state['keyboard']['ctrl-left']:
-            self.player.angle += self.player_rot_speed
+            self.player[0].angle += self.player_rot_speed
         if game_state['keyboard']['ctrl-right']:
-            self.player.angle -= self.player_rot_speed
+            self.player[0].angle -= self.player_rot_speed
+
+	self.player[2] -= 1
+	if self.player[2] == 0:
+		if self.player[1]:
+			self.player[0].image = load_image('res/spaceship1.png')
+		else:
+			self.player[0].image = load_image('res/spaceship2.png')
+		self.player[1] = not self.player[1]
+		self.player[2] = 4
 
         hitbox_offset = 15
-        player_pos = self.player.pos - Vec2(self.player.size[0] // 2, self.player.size[1] // 2) + Vec2(hitbox_offset, hitbox_offset)
-        player_size = (self.player.size[0] - hitbox_offset, self.player.size[1] - hitbox_offset)
+        player_pos = self.player[0].pos - Vec2(self.player[0].size[0] // 2, self.player[0].size[1] // 2) + Vec2(hitbox_offset, hitbox_offset)
+        player_size = (self.player[0].size[0] - hitbox_offset, self.player[0].size[1] - hitbox_offset)
         for meteor in reversed(self.meteorites):
             meteor_pos = meteor[0].pos - Vec2(meteor[0].size[0] // 2, meteor[0].size[1] // 2) + Vec2(hitbox_offset, hitbox_offset)
             meteor_size = (meteor[0].size[0] - hitbox_offset, meteor[0].size[1] - hitbox_offset)
@@ -59,15 +68,15 @@ class MeteorState(WorldInterface):
 
     def reset(self, game_state):
         self.generate_meteorite_waves(randint(5, 10))
-        self.player.pos[0] = 320
-        self.player.pos[1] = 400
-        self.player.angle = 0
+        self.player[0].pos[0] = 320
+        self.player[0].pos[1] = 400
+        self.player[0].angle = 0
 
         self.sprites[:] = []
         self.sprites.append(self.bg)
         for meteor in self.meteorites:
             self.sprites.append(meteor[0])
-        self.sprites.append(self.player)
+        self.sprites.append(self.player[0])
 
         game_state['camera'].x = 0
         game_state['camera'].y = 0
