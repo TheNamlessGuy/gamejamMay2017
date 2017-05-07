@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 from Gspace import WorldInterface, Sprite, load_image, collides_with, Vec2
-from random import randint
+from random import randint, choice
 from math import sin, cos, radians
 
 class SpaceState(WorldInterface):
@@ -22,6 +22,7 @@ class SpaceState(WorldInterface):
         self.player_rot_speed = 5
 
         self.meteor_speed = self.player_speed + 0.5
+        self.meteor_rot_speed = 25
         self.planet_rot_speed = 0.3
 
         self.current_planet = None
@@ -63,10 +64,10 @@ class SpaceState(WorldInterface):
             if collides_with(self.player[0].pos, self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
                 self.collided_meteor = True
             meteor[0].pos = meteor[0].pos - (meteor[1] * self.meteor_speed)
+            meteor[0].angle += self.meteor_rot_speed
             meteor[2] -= 1
             if meteor[2] == 0:
-                meteor[1].x = randint(-1, 1)
-                meteor[1].y = randint(-1, 1)
+                meteor[1] = self.random_dir()
                 meteor[2] = randint(5, 10)
 
         if self.collided_meteor: return game_state['world-meteor']
@@ -144,7 +145,13 @@ class SpaceState(WorldInterface):
         size = (25, 25)
         for i in range(amount):
             sprite = Sprite(load_image('res/asteroid' + str(randint(1, 4)) +'.png'), self.random_pos(size), size)
-            self.meteors.append([sprite, Vec2(randint(-1, 1), randint(-1, 1)), randint(5, 10)]) # Sprite, move direction, time to move
+            self.meteors.append([sprite, self.random_dir(), randint(5, 10)]) # Sprite, move direction, time to move
+
+    def random_dir(self):
+        retval = Vec2(randint(-1, 1), randint(-1, 1))
+        if retval.x == 0 and retval.y == 0:
+            retval[choice([0, 1])] += choice([-1, 1])
+        return retval
 
     def random_pos(self, size):
         loop = True
