@@ -46,7 +46,10 @@ class TransitionCutsceneState(WorldInterface):
         self.sprites = []
 
         if game_state["keyboard"]["ctrl-debug"]:
-            return game_state["world-planet"]
+            if self.flying_direction == "down":
+                return game_state["world-planet"]
+            elif self.flying_direction == "up":
+                return game_state["world-space"]
 
         def update_back_falling_and_draw(spr, minpos):
             spr.pos.y += self.background_speed
@@ -65,7 +68,10 @@ class TransitionCutsceneState(WorldInterface):
             self.flyer_pos = self.flyer_pos + self.flyer_speed
             spr.pos = self.flyer_pos
             if self.termination_check(self.flyer_pos.y):
-                return game_state["world-planet"]
+                if self.flying_direction == "down":
+                    return game_state["world-planet"]
+                elif self.flying_direction == "up":
+                    return game_state["world-space"]
             self.sprites.append(spr)
 
         if self.flying_direction == "down":
