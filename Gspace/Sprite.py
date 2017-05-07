@@ -18,11 +18,12 @@ def load_image( path ):
 
 # override this class to add features
 class Sprite:
-    def __init__( self, image, pos, size, angle=0.0, z=0 ):
+    def __init__( self, image, pos, size, angle=0.0, z=0, flip=False ):
         self.image          = image
         self.pos            = pos
         self.size           = size
         self.angle          = angle
         self.z              = z
         self.special_fx_id  = 0 # ugly hack that works <3
+        self.flip           = flip
 
