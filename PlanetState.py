@@ -140,7 +140,7 @@ class PlanetState(WorldInterface):
         #Debug win    
         if game_state['keyboard']['ctrl-debug'] and game_state['keyboard']['ctrl-right']:
             game_state['went-well'] = True
-            return game_state['world-space']
+            return game_state['world-cutscene']['spoon-expansion']
             
         #Position legs and draw player    
         self.player_legs.pos = self.player.pos
@@ -155,7 +155,7 @@ class PlanetState(WorldInterface):
         self.sprites.append(self.player)
         self.sprites.append(self.player_legs)
         
-        #Enemy thinks
+        #Enemy think
         #time for next dir?
             #set new dir
         
