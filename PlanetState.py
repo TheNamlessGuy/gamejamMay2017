@@ -89,7 +89,6 @@ class PlanetState(WorldInterface):
         self.ticks['player_attack'] = 0
         self.ticks['enemy_attack'] = 0
         self.ticks['enemy_move'] = 0       
-               
                                             
         #BG
         self.bg = (Sprite(None, Vec2(320, 240), (640, 480)))
@@ -97,7 +96,7 @@ class PlanetState(WorldInterface):
         #Player
         self.player = (Sprite(None, Vec2(150, 320), (100, 62)))
         self.player_legs = (Sprite(None, Vec2(200, 360), (100, 62)))
-        self.player_speed = 1
+        self.player_speed = 5.0
         self.player_can_attack = True
         self.player_next_attack = 0
         
@@ -123,13 +122,13 @@ class PlanetState(WorldInterface):
                 
         #Do input
         if game_state['keyboard']['ctrl-up']:
-            pass
+            self.player.pos.y -= self.player_speed;
         if game_state['keyboard']['ctrl-left']:
-            pass
+            self.player.pos.x -= self.player_speed;
         if game_state['keyboard']['ctrl-right']:
-            pass
+            self.player.pos.x += self.player_speed;
         if game_state['keyboard']['ctrl-down']:
-            pass
+            self.player.pos.y += self.player_speed;
         if game_state['keyboard']['ctrl-action']:
             if self.player_can_attack and self.ticks['player_attack'] <= 0:  
                 self.player_can_attack = False
