@@ -7,6 +7,7 @@ from math import sin, cos, radians
 class MeteorState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
+        self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))
         self.player = Sprite(load_image('res/spaceship2.png'), Vec2(320, 400), (60, 60))
         self.meteorites = []
 
@@ -24,7 +25,7 @@ class MeteorState(WorldInterface):
             hh = self.player.size[1] // 2
 
             if self.player.pos[0] - hw < 0: self.player.pos[0] = hw
-            if self.player.pos[1] - hh< 0: self.player.pos[1] = hh
+            if self.player.pos[1] - hh < 0: self.player.pos[1] = hh
             if self.player.pos[0] + hw > 640: self.player.pos[0] = 640 - hw
             if self.player.pos[1] + hh > 480: self.player.pos[1] = 480 - hh
 
@@ -33,7 +34,6 @@ class MeteorState(WorldInterface):
         if game_state['keyboard']['ctrl-right']:
             self.player.angle -= self.player_rot_speed
 
-        #for i in range(len(self.meteorites)):
         for meteor in reversed(self.meteorites):
             if collides_with(self.player.pos, self.player.size, meteor.pos, meteor.size):
                 game_state['went-well'] = False
@@ -54,6 +54,7 @@ class MeteorState(WorldInterface):
         self.player.angle = 0
 
         self.sprites[:] = []
+        self.sprites.append(self.bg)
         for meteor in self.meteorites:
             self.sprites.append(meteor)
         self.sprites.append(self.player)
