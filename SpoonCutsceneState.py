@@ -26,7 +26,7 @@ class SpoonCutsceneState(WorldInterface):
     def update(self, game_state):
         self.sprites = []
 
-        if game_state["keyboard"]["ctrl-debug"]:
+        if game_state["keyboard"]["ctrl-debug"] and game_state["keyboard"]["ctrl-left"]:
             return game_state["world-cutscene"]["rising"]
 
         next_state = self.states[self.current_state](game_state)

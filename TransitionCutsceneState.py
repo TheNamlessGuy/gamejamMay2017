@@ -45,7 +45,7 @@ class TransitionCutsceneState(WorldInterface):
     def update(self, game_state):
         self.sprites = []
 
-        if game_state["keyboard"]["ctrl-debug"]:
+        if game_state["keyboard"]["ctrl-debug"] and game_state["keyboard"]["ctrl-up"]:
             if self.flying_direction == "down":
                 return game_state["world-planet"]
             elif self.flying_direction == "up":
