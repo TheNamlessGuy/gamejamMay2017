@@ -11,7 +11,7 @@ class GameOverState(WorldInterface):
         if game_state['keyboard']['ctrl-action']:
             game_state['spoon-pwr'] = 0
             game_state['hard-reset'] = True
-            return game_state['world-space']
+            return game_state['world-splash']
 
     def reset(self, game_state):
         self.sprites.append(self.bg)
