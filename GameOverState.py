@@ -9,6 +9,7 @@ class GameOverState(WorldInterface):
 
     def update(self, game_state):
         if game_state['keyboard']['ctrl-action']:
+            game_state['spoon-pwr'] = 0
             game_state['hard-reset'] = True
             return game_state['world-space']
 

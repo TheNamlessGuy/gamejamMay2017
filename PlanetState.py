@@ -107,6 +107,7 @@ class PlanetState(WorldInterface):
         self.player_can_attack = True
         self.player_next_attack = 0
         self.player_flipped = False
+        self.player_dmg = 1
         
         #Enemy
         self.enemies = []
@@ -137,7 +138,12 @@ class PlanetState(WorldInterface):
             if self.player_can_attack and self.ticks['player_attack'] <= 0:  
                 self.player_can_attack = False
                 self.ticks['player_attack'] = 19
-                self.player_animator.set_anim('small_eat')
+                if game_state['spoon-pwr'] == 0:
+                    self.player_animator.set_anim('small_eat')
+                elif game_state['spoon-pwr'] == 1:
+                    self.player_animator.set_anim('medium_eat')
+                elif game_state['spoon-pwr'] >= 2:
+                    self.player_animator.set_anim('large_eat')
                 #Check collision with ENEMIES
         else:
             self.player_can_attack = True    
@@ -145,6 +151,9 @@ class PlanetState(WorldInterface):
         #Debug win    
         if game_state['keyboard']['ctrl-debug'] and game_state['keyboard']['ctrl-right']:
             game_state['went-well'] = True
+            game_state['spoon-pwr'] += 1
+            if game_state['spoon-pwr'] == 3 or game_state['spoon-pwr'] == 4:
+                return game_state['world-cutscene']['rising']
             return game_state['world-cutscene']['spoon-expansion']
                     
         #Enemy think
@@ -206,17 +215,21 @@ class PlanetState(WorldInterface):
         self.enemies = []
     
         #Set up player based on SPOON PWR TODO
-        #if game_state['spoon-pwr']
-        
-        
-        self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
+        if game_state['spoon-pwr'] == 0:
+            self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
+            self.player_dmg = 1
+        elif game_state['spoon-pwr'] == 1:
+            self.player_animator = Animator(self.anims['player'], 'medium_walk', self.player)
+            self.player_dmg = 3
+        elif game_state['spoon-pwr'] >= 2:
+            self.player_animator = Animator(self.anims['player'], 'large_walk', self.player)
+            self.player_dmg = 6
+            
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
         #Set up enemy based on planet
         planet = game_state['identifier']
-        self.spawn_enemy(planet)
-        
-        #reset state vars     
+        self.spawn_enemy(planet) 
         
         #set correct BG 
         self.bg.image = self.res['bgs'][planet-1]
