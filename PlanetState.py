@@ -1,6 +1,6 @@
 #encoding: utf-8
 
-from Gspace import WorldInterface, Sprite, load_image, Vec2
+from Gspace import WorldInterface, Sprite, load_image, collides_with, Vec2
 from random import randint
 from math import sin, cos, radians
 
@@ -108,7 +108,9 @@ class PlanetState(WorldInterface):
         self.player_next_attack = 0
         self.player_flipped = False
         self.player_dmg = 1
-        self.player_targets = 1
+        self.player_hitbox = (33,55)
+        self.player_attack_hitbox_offset = Vec2(0,0)
+        self.player_attack_size = (1,1)
         
         #Enemy
         self.enemies = []
@@ -124,10 +126,11 @@ class PlanetState(WorldInterface):
         #Draw BG
         self.sprites.append(self.bg)
         
-        #Check Enemy collision TODO
-        #for enemy in self.enemies:
-            
-        
+        #Check if enemy runs into you
+        for enemy in self.enemies:
+            if collides_with(self.player.pos, self.player_hitbox, enemy['enemy'].pos, enemy['hitbox']):
+                game_state['went-well'] = False
+                return game_state['world-cutscene']['rising']
                 
         #Do input
         if game_state['keyboard']['ctrl-up']:
@@ -150,7 +153,27 @@ class PlanetState(WorldInterface):
                     self.player_animator.set_anim('medium_eat')
                 elif game_state['spoon-pwr'] >= 2:
                     self.player_animator.set_anim('large_eat')
-                #Check collision with ENEMIES
+                for enemy in reversed(self.enemies):
+                    if self.player_flipped:
+                        hitbox_pos = self.player.pos + self.player_attack_hitbox_offset
+                    else:
+                        hitbox_pos = self.player.pos + self.player_attack_hitbox_offset
+
+                    if collides_with(hitbox_pos, self.player_attack_size, enemy['enemy'].pos, enemy['hitbox']):
+                        enemy['stuck'] = True
+                        enemy['stuck_time'] = 10
+                        enemy['hp'] -= self.player_dmg
+                        if enemy['hp'] <= 0:
+                            enemy['enemy'].image = None #instead of removing?
+                            self.enemies.pop(self.enemies.index(enemy))    
+                            
+                if len(self.enemies) == 0:
+                    game_state['went-well'] = True
+                    game_state['spoon-pwr'] += 1
+                    if game_state['spoon-pwr'] == 3 or game_state['spoon-pwr'] == 4:
+                        return game_state['world-cutscene']['rising']
+                    return game_state['world-cutscene']['spoon-expansion']
+                    
                 
         else:
             self.player_can_attack = True    
@@ -172,8 +195,14 @@ class PlanetState(WorldInterface):
                 enemy['direction'] = randint(0,360)
             
             #Movement
-            enemy['enemy'].pos.x -= enemy['speed'] * sin(radians(enemy['direction']))
-            enemy['enemy'].pos.y -= enemy['speed'] * cos(radians(enemy['direction']))
+            if enemy['stuck']:
+                enemy['stuck_time'] -= 1
+                if enemy['stuck_time'] <= 0:
+                    enemy['stuck'] = False
+                    enemy['next_dir'] = 0
+            else:
+                enemy['enemy'].pos.x -= enemy['speed'] * sin(radians(enemy['direction']))
+                enemy['enemy'].pos.y -= enemy['speed'] * cos(radians(enemy['direction']))
 
             #Level bounds
             if enemy['enemy'].pos.x < 60:
@@ -225,12 +254,18 @@ class PlanetState(WorldInterface):
         if game_state['spoon-pwr'] == 0:
             self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
             self.player_dmg = 1
+            self.player_attack_hitbox_offset = Vec2(20,0)
+            self.player_attack_size = (150,100)
         elif game_state['spoon-pwr'] == 1:
             self.player_animator = Animator(self.anims['player'], 'medium_walk', self.player)
             self.player_dmg = 3
+            self.player_attack_hitbox_offset = Vec2(25,0)
+            self.player_attack_size = (30,20)
         elif game_state['spoon-pwr'] >= 2:
             self.player_animator = Animator(self.anims['player'], 'large_walk', self.player)
             self.player_dmg = 6
+            self.player_attack_hitbox_offset = Vec2(35,0)
+            self.player_attack_size = (50,30)
             
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
@@ -242,7 +277,6 @@ class PlanetState(WorldInterface):
         self.bg.image = self.res['bgs'][planet-1]
         
     def planet_spawn(self, planet):
-        print(planet)
         if planet == 1:
             self.spawn_enemy(1, Vec2(460, 320))
         elif planet == 2:
@@ -258,7 +292,6 @@ class PlanetState(WorldInterface):
             self.spawn_enemy(3, Vec2(350, 120))
 
     def spawn_enemy(self, enemy_type, pos):
-        print("SHOULD SPAWN",enemy_type,pos.x,pos.y)
         if enemy_type == 1:
             enemy = {} #STICK
             enemy['enemy'] = (Sprite(None, Vec2(pos.x, pos.y), (80, 100))) 
@@ -269,6 +302,9 @@ class PlanetState(WorldInterface):
             enemy['type'] = 1 
             enemy['hp'] = 5
             enemy['important'] = True
+            enemy['stuck'] = False
+            enemy['stuck_time'] = 0
+            enemy['hitbox'] = (70, 85)
             self.enemies.append(enemy)
         elif enemy_type == 2:
             enemy = {} #CONE
@@ -280,6 +316,9 @@ class PlanetState(WorldInterface):
             enemy['type'] = 2
             enemy['hp'] = 5
             enemy['important'] = True
+            enemy['stuck'] = False
+            enemy['stuck_time'] = 0
+            enemy['hitbox'] = (70, 90)
             self.enemies.append(enemy)
         elif enemy_type == 3:
             enemy = {} #BOAT
@@ -292,6 +331,9 @@ class PlanetState(WorldInterface):
             enemy['type'] = 3
             enemy['hp'] = 5
             enemy['important'] = True
+            enemy['stuck'] = False
+            enemy['stuck_time'] = 0
+            enemy['hitbox'] = (70, 58)
             self.enemies.append(enemy)
         elif enemy_type == 4:
             enemy = {}
@@ -303,5 +345,8 @@ class PlanetState(WorldInterface):
             enemy['type'] = 4
             enemy['hp'] = 5
             enemy['important'] = False
+            enemy['stuck'] = False
+            enemy['stuck_time'] = 0
+            enemy['hitbox'] = (43,43)
             self.enemies.append(enemy)
         
