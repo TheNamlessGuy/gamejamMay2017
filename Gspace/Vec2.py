@@ -20,7 +20,10 @@ class Vec2:
     
     # add, sub, mul, rmul operators:
     def __add__( self, other ):
-        return Vec2( self.x + other.x, self.y + other.y )
+        if isinstance(other, Vec2):
+            return Vec2( self.x + other.x, self.y + other.y )
+        else:
+            return Vec2( self.x + other, self.y + other )
     
     def __sub__( self, other ):
         return Vec2( self.x - other.x, self.y - other.y )

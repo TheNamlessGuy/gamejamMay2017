@@ -37,8 +37,13 @@ class MeteorState(WorldInterface):
         if game_state['keyboard']['ctrl-right']:
             self.player.angle -= self.player_rot_speed
 
+        hitbox_offset = 15
+        player_pos = self.player.pos - Vec2(self.player.size[0] // 2, self.player.size[1] // 2) + hitbox_offset
+        player_size = (self.player.size[0] - hitbox_offset, self.player.size[1] - hitbox_offset)
         for meteor in reversed(self.meteorites):
-            if collides_with(self.player.pos, self.player.size, meteor[0].pos, meteor[0].size):
+            meteor_pos = meteor[0].pos - Vec2(meteor[0].size[0] // 2, meteor[0].size[1] // 2) + hitbox_offset
+            meteor_size = (meteor[0].size[0] - hitbox_offset, meteor[0].size[1] - hitbox_offset)
+            if collides_with(player_pos, player_size, meteor_pos, meteor_size):
                 game_state['went-well'] = False
                 return game_state['world-gameover']
 
