@@ -186,6 +186,9 @@ class PlanetState(WorldInterface):
         game_state['camera'].x = 0
         game_state['camera'].y = 0
     
+        #Reset enemies
+        self.enemies = []
+    
         #Set up animations
         self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
