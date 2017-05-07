@@ -105,13 +105,6 @@ class PlanetState(WorldInterface):
         
         #Enemy
         self.enemies = []
-        #self.enemy = (Sprite(None, Vec2(460, 320), (80, 100))) 
-        #self.enemy_direction = 0
-        #self.enemy_next_dir = 0
-        #self.enemy_speed = 1
-        
-        self.enemytemp = (Sprite(None, Vec2(150, 120), (80, 100))) 
-        self.enemytemp2 = (Sprite(None, Vec2(300, 240), (80, 58))) 
 
     def update(self, game_state):
         #Clear sprites
@@ -146,14 +139,6 @@ class PlanetState(WorldInterface):
             game_state['went-well'] = True
             return game_state['world-cutscene']['spoon-expansion']
             
-        #Position legs and draw player    
-        self.player_legs.pos = self.player.pos
-        
-        self.player_animator.anim_update()
-        self.plegs_animator.anim_update()
-              
-        self.sprites.append(self.player)
-        self.sprites.append(self.player_legs)
         
         #Enemy think
         for enemy in self.enemies:
@@ -181,14 +166,19 @@ class PlanetState(WorldInterface):
                 enemy['enemy'].pos.y = 420
                 enemy['next_dir'] = 0                      
         
-        #Animate and Draw Enemy
+        #Animate and draw enemy
         for enemy in self.enemies:
             enemy['animator'].anim_update()
             self.sprites.append(enemy['enemy'])
+            
+        #Position legs, animate and draw player   
+        self.player_legs.pos = self.player.pos
         
-        #self.sprites.append(self.enemy)
-        #self.sprites.append(self.enemytemp)
-        #self.sprites.append(self.enemytemp2)
+        self.player_animator.anim_update()
+        self.plegs_animator.anim_update()
+              
+        self.sprites.append(self.player)
+        self.sprites.append(self.player_legs)
         
         
     def reset(self, game_state):
@@ -204,27 +194,40 @@ class PlanetState(WorldInterface):
         planet = game_state['identifier']
         self.spawn_enemy(planet)
         
-        #Stick
-        #self.enemy_animator = Animator(self.anims['enemy_stick'], 'walk', self.enemy)
-        #self.enemy2_animator = Animator(self.anims['enemy_cone'], 'walk', self.enemytemp)
-        #self.enemy3_animator = Animator(self.anims['enemy_boat'], 'walk', self.enemytemp2)
-        
-        #reset state vars
-        
+        #reset state vars     
         
         #set correct BG 
         self.bg.image = self.res['bgs'][planet-1]
         
     def spawn_enemy(self, planet):
-         #if planet == 1:
-        enemy = {} #STICK
-        enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100))) 
-        enemy['animator'] = Animator(self.anims['enemy_stick'], 'walk', enemy['enemy'])
-        enemy['direction'] = 0
-        enemy['next_dir'] = 0
-        enemy['speed'] = 7.0
-        enemy['type'] = 0 
-        self.enemies.append(enemy)
+        
+        enemy_type = randint(1,3)
+        if enemy_type == 1:
+            enemy = {} #STICK
+            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100))) 
+            enemy['animator'] = Animator(self.anims['enemy_stick'], 'walk', enemy['enemy'])
+            enemy['direction'] = 0
+            enemy['next_dir'] = 0
+            enemy['speed'] = 7.0
+            enemy['type'] = 1 
+            self.enemies.append(enemy)
+        elif enemy_type == 2:
+            enemy = {} #CONE
+            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100)))  
+            enemy['animator'] = Animator(self.anims['enemy_cone'], 'walk', enemy['enemy'])
+            enemy['direction'] = 0
+            enemy['next_dir'] = 0
+            enemy['speed'] = 6.0
+            enemy['type'] = 2 
+            self.enemies.append(enemy)
+        elif enemy_type == 3:
+            enemy = {} #BOAT
+            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 58))) 
+            enemy['animator'] = Animator(self.anims['enemy_boat'], 'walk', enemy['enemy'])
+            enemy['direction'] = 0
+            enemy['next_dir'] = 0
+            enemy['speed'] = 2.0
+            enemy['type'] = 3 
+            self.enemies.append(enemy)
 
         
-    
