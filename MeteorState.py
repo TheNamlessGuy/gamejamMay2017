@@ -35,13 +35,15 @@ class MeteorState(WorldInterface):
             self.player.angle -= self.player_rot_speed
 
         for meteor in reversed(self.meteorites):
-            if collides_with(self.player.pos, self.player.size, meteor.pos, meteor.size):
+            if collides_with(self.player.pos, self.player.size, meteor[0].pos, meteor[0].size):
                 game_state['went-well'] = False
                 return game_state['world-gameover']
 
-            meteor.pos[1] += self.meteor_speed
-            if meteor.pos[1] > 500:
+            meteor[0].pos[1] += self.meteor_speed
+            meteor[0].angle += meteor[1]
+            if meteor[0].pos[1] > 500:
                 self.meteorites.pop(self.meteorites.index(meteor))
+                self.sprites.pop(self.sprites.index(meteor[0]))
 
         if len(self.meteorites) == 0:
             game_state['went-well'] = True
@@ -56,7 +58,7 @@ class MeteorState(WorldInterface):
         self.sprites[:] = []
         self.sprites.append(self.bg)
         for meteor in self.meteorites:
-            self.sprites.append(meteor)
+            self.sprites.append(meteor[0])
         self.sprites.append(self.player)
 
         game_state['camera'].x = 0
@@ -74,7 +76,7 @@ class MeteorState(WorldInterface):
                 if collides_with(meteor.pos, meteor.size, free_space[0], free_space[1]):
                     meteor.pos[0] += free_space[1][0]
                 last_x = meteor.pos[0]
-                self.meteorites.append(meteor)
+                self.meteorites.append((meteor, randint(1, 5))) # Sprite, rot speed
 
                 if meteor.pos[0] + meteor.size[0] > 640: break
 
