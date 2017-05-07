@@ -6,25 +6,25 @@ class Animator():
     def __init__(self, anims, start_anim, sprite):
         self.anims = anims 
         self.target = sprite
-        self.do_anim(start_anim)
+        self.set_anim(start_anim)
         
     def anim_update(self):
         self.next -= 1
         
         if self.next <= 0:
             if self.cur_index == len(self.cur_anim[0]) - 1:
-                self.do_anim(self.cur_anim[2])
+                self.set_anim(self.cur_anim[2])
             else:
-                self.cur_index += 1
-                self.target.image = self.cur_anim[0][self.cur_index]
-                self.next = self.cur_anim[1]
-                self.target.image = self.cur_anim[0][self.cur_index]
-                
-    def do_anim(self, new_anim, index=0):
-        self.cur_anim = self.anims[new_anim]
+                self.set_frame(self.cur_index + 1)
+    
+    def set_frame(self, index=0):
         self.cur_index = index
         self.next = self.cur_anim[1]
         self.target.image = self.cur_anim[0][self.cur_index]
+        
+    def set_anim(self, new_anim):
+        self.cur_anim = self.anims[new_anim]
+        self.set_frame()
 
 
 class PlanetState(WorldInterface):
@@ -134,7 +134,7 @@ class PlanetState(WorldInterface):
             if self.player_can_attack and self.ticks['player_attack'] <= 0:  
                 self.player_can_attack = False
                 self.ticks['player_attack'] = 19
-                self.player_animator.do_anim('small_eat')
+                self.player_animator.set_anim('small_eat')
         else:
             self.player_can_attack = True    
         
@@ -162,7 +162,6 @@ class PlanetState(WorldInterface):
         
         #Move enemy
         #Do anim update
-        
         
         #Draw Enemy   
         self.sprites.append(self.enemy)
