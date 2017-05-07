@@ -26,6 +26,9 @@ class SpoonCutsceneState(WorldInterface):
     def update(self, game_state):
         self.sprites = []
 
+        if game_state["keyboard"]["ctrl-debug"]:
+            return game_state["world-planet"]
+
         next_state = self.states[self.current_state](game_state)
         if next_state is not None:
             return next_state
