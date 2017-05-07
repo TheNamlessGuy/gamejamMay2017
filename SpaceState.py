@@ -102,13 +102,12 @@ class SpaceState(WorldInterface):
         if self.current_planet is not None:
             if 'went-well' in game_state and game_state['went-well']:
                 self.planets[self.current_planet][1] = False
-            else:
-                self.player[1] = 48
             self.current_planet = None
 
         if self.collided_meteor:
-            self.player[1] = 48
             self.collided_meteor = False
+
+        self.player[1] = 48
 
         self.set_sprites()
         self.set_camera(game_state)
