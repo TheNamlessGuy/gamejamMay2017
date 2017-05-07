@@ -9,7 +9,7 @@ class SpaceState(WorldInterface):
         WorldInterface.__init__(self)
         self.world_size = (1920, 1080)
 
-        self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))#Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
+        self.bg = Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
         self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48] # Sprite, invincibility timer
 
@@ -60,7 +60,7 @@ class SpaceState(WorldInterface):
 
         # Update meteors + collision
         for meteor in self.meteors:
-            if collides_with(self.player[0].pos, self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
+            if collides_with(self.player[0].pos - (self.player[0].size / 2), self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
                 self.collided_meteor = True
             meteor[0].pos = meteor[0].pos - (meteor[1] * self.meteor_speed)
             meteor[2] -= 1
