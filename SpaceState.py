@@ -11,7 +11,8 @@ class SpaceState(WorldInterface):
 
         self.bg = Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
-        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48] # Sprite, invincibility timer
+        self.boss_planet = (Sprite(load_image('res/planet_final.png'), Vec2((self.world_size[0] // 2) + 250, (self.world_size[1] // 2) - 150), (200, 200)), 0.5)
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 999999999] # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -78,6 +79,8 @@ class SpaceState(WorldInterface):
             planet[0].angle += self.planet_rot_speed
             if collides_with(self.player[0].pos, self.player[0].size, planet[0].pos, planet[0].size) and planet[1]:
                 can_land_on = index
+        self.boss_planet[0].angle += self.boss_planet[1]
+        self.boss_planet[0].pos = self.boss_planet[0].pos + self.random_dir() * 2
 
         # Detect if landing on planet
         if can_land_on is not None and game_state['keyboard']['ctrl-action']:
@@ -126,6 +129,7 @@ class SpaceState(WorldInterface):
         self.sprites.append(self.bg)
         for planet in self.planets:
             self.sprites.append(planet[0])
+        self.sprites.append(self.boss_planet[0])
         for meteor in self.meteors:
             self.sprites.append(meteor[0])
         self.sprites.append(self.player[0])
@@ -160,6 +164,10 @@ class SpaceState(WorldInterface):
             loop = False
 
             if collides_with(pos, size, self.player[0].pos, self.player[0].size):
+                loop = True
+                continue
+
+            if collides_with(pos, size, self.boss_planet[0].pos, self.boss_planet[0].size):
                 loop = True
                 continue
 
