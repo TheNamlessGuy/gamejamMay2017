@@ -60,7 +60,7 @@ class SpaceState(WorldInterface):
 
         # Update meteors + collision
         for meteor in self.meteors:
-            if collides_with(self.player[0].pos - (self.player[0].size / 2), self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
+            if collides_with(self.player[0].pos, self.player[0].size, meteor[0].pos, meteor[0].size) and self.player[1] == 0:
                 self.collided_meteor = True
             meteor[0].pos = meteor[0].pos - (meteor[1] * self.meteor_speed)
             meteor[2] -= 1
