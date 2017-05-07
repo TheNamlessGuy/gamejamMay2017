@@ -9,9 +9,9 @@ class SpaceState(WorldInterface):
         WorldInterface.__init__(self)
         self.world_size = (1920, 1080)
 
-        self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))
+        self.bg = Sprite(load_image('res/space.png'), Vec2(320, 240), (640, 480))#Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
-        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(320, 240), (80, 80)), 48] # Sprite, invincibility timer
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48] # Sprite, invincibility timer
 
         self.planets = []
         self.meteors = []
@@ -28,23 +28,24 @@ class SpaceState(WorldInterface):
         self.collided_meteor = False
 
     def update(self, game_state):
-        if len(self.sprites) == 0: self.set_sprites()
-
-        #if game_state['keyboard']['ctrl-debug']:
-        #    return game_state['world-meteor']
+        if len(self.sprites) == 0:
+            self.set_sprites()
+            self.set_camera(game_state)
 
         # Update player
         if game_state['keyboard']['ctrl-up']:
             self.player[0].pos[0] -= self.player_speed * sin(radians(self.player[0].angle))
             self.player[0].pos[1] -= self.player_speed * cos(radians(self.player[0].angle))
 
-            if self.player[0].pos[0] < 0: self.player[0].pos[0] = 0
-            if self.player[0].pos[1] < 0: self.player[0].pos[1] = 0
-            if self.player[0].pos[0] > self.world_size[0]: self.player[0].pos[0] = self.world_size[0]
-            if self.player[0].pos[1] > self.world_size[1]: self.player[0].pos[1] = self.world_size[1]
+            hw = self.player[0].size[0] // 2
+            hh = self.player[0].size[1] // 2
 
-            game_state['camera'].x = self.player[0].pos[0] - 320
-            game_state['camera'].y = self.player[0].pos[1] - 240
+            if self.player[0].pos[0] - hw < 0: self.player[0].pos[0] = hw
+            if self.player[0].pos[1] - hh < 0: self.player[0].pos[1] = hh
+            if self.player[0].pos[0] + hw > self.world_size[0]: self.player[0].pos[0] = self.world_size[0] - hw
+            if self.player[0].pos[1] + hh > self.world_size[1]: self.player[0].pos[1] = self.world_size[1] - hh
+
+            self.set_camera(game_state)
 
         self.player[1] -= 1 if self.player[1] != 0 else 0 # invincibility timer
         if self.player[1] != 0 and self.player[1] % 3 == 0:
@@ -85,7 +86,7 @@ class SpaceState(WorldInterface):
         
         # Set "Enter planet" prompt to render
         if can_land_on is not None:
-            self.enter_planet.image = load_image('res/press_space_to_continue1.png')
+            if self.enter_planet.image is None: self.enter_planet.image = load_image('res/press_space_to_continue1.png')
             self.enter_planet.pos[0] = self.player[0].pos[0]
             self.enter_planet.pos[1] = self.player[0].pos[1] - self.player[0].size[1]
         else:
@@ -108,10 +109,17 @@ class SpaceState(WorldInterface):
             self.player[1] = 48
             self.collided_meteor = False
 
+        self.set_sprites()
+        self.set_camera(game_state)
+
+    def set_camera(self, game_state):
         game_state['camera'].x = self.player[0].pos[0] - 320
         game_state['camera'].y = self.player[0].pos[1] - 240
 
-        self.set_sprites()
+        if game_state['camera'].x < 0: game_state['camera'].x = 0
+        if game_state['camera'].y < 0: game_state['camera'].y = 0
+        if game_state['camera'].x + 640 > self.world_size[0]: game_state['camera'].x = self.world_size[0] - 640
+        if game_state['camera'].y + 480 > self.world_size[1]: game_state['camera'].y = self.world_size[1] - 480
 
     def set_sprites(self):
         self.sprites[:] = []
