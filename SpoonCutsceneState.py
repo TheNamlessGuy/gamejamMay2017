@@ -86,5 +86,5 @@ class SpoonCutsceneState(WorldInterface):
         else:
             self.sprites.append(self.local_sprites[4])
 
-        if self.current_frame > 48:
+        if self.current_frame > 32:
             return self.goto_next(game_state)
