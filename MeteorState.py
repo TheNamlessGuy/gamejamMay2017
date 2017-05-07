@@ -17,6 +17,9 @@ class MeteorState(WorldInterface):
         self.player_rot_speed = 10
 
     def update(self, game_state):
+        if game_state['keyboard']['ctrl-debug']:
+            self.meteorites[:] = []
+
         if game_state['keyboard']['ctrl-up']:
             self.player.pos[0] -= self.player_speed * sin(radians(self.player.angle))
             self.player.pos[1] -= self.player_speed * cos(radians(self.player.angle))
