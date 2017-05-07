@@ -12,7 +12,7 @@ class SpaceState(WorldInterface):
         self.bg = Sprite(load_image('res/space.png'), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (self.world_size[0], self.world_size[1]))
         self.enter_planet = Sprite(load_image("res/press_space_to_continue1.png"), Vec2(0, 0), (250, 50))
         self.boss_planet = (Sprite(load_image('res/planet_final.png'), Vec2((self.world_size[0] // 2) + 250, (self.world_size[1] // 2) - 150), (200, 200)), 0.5)
-        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48] # Sprite, invincibility timer
+        self.player = [Sprite(load_image("res/spaceship2.png"), Vec2(self.world_size[0] // 2, self.world_size[1] // 2), (80, 80)), 48, True, 4] # Sprite, invincibility timer, which picture
 
         self.planets = []
         self.meteors = []
@@ -48,6 +48,15 @@ class SpaceState(WorldInterface):
             if self.player[0].pos[1] + hh > self.world_size[1]: self.player[0].pos[1] = self.world_size[1] - hh
 
             self.set_camera(game_state)
+
+        self.player[3] -= 1
+        if self.player[3] == 0:
+            if self.player[2]:
+                self.player[0].image = load_image('res/spaceship1.png')
+            else:
+                self.player[0].image = load_image('res/spaceship2.png')
+            self.player[2] = not self.player[2]
+            self.player[3] = 4
 
         self.player[1] -= 1 if self.player[1] != 0 else 0 # invincibility timer
         if self.player[1] != 0 and self.player[1] % 3 == 0:
