@@ -83,14 +83,21 @@ class EndCutsceneState(WorldInterface):
         self.current_frame = 0
         self.current_state = 0
 
-        self.walker_pos = Vec2(80, 380)
-        self.eater_pos = Vec2(510, 380)
-        self.planet_pos = Vec2(320, 240)
+        self.walker_pos.x = 80
+        self.walker_pos.y = 380
+        self.eater_pos.x = 510
+        self.eater_pos.y = 380
+        self.planet_pos.x = 320
+        self.planet_pos.y = 240
         self.planet_current = 0
-        self.spaceship_pos = Vec2(320, 240)
-        self.spaceship_speed = Vec2(12, -12)
-        self.spaceship_speed_start = Vec2(12, 12)
-        self.spaceship_pos_start = Vec2(-100, -160)
+        self.spaceship_pos.x = 320
+        self.spaceship_pos.y = 240
+        self.spaceship_speed.x = 12
+        self.spaceship_speed.y = -12
+        self.spaceship_speed_start.x = 12
+        self.spaceship_speed_start.y = 12
+        self.spaceship_pos_start.x = -100
+        self.spaceship_pos_start.y = -160
 
     def goto_next(self, game_state):
         self.current_state += 1
