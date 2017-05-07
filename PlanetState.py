@@ -108,6 +108,7 @@ class PlanetState(WorldInterface):
         self.player_next_attack = 0
         self.player_flipped = False
         self.player_dmg = 1
+        self.player_targets = 1
         
         #Enemy
         self.enemies = []
@@ -122,6 +123,11 @@ class PlanetState(WorldInterface):
         
         #Draw BG
         self.sprites.append(self.bg)
+        
+        #Check Enemy collision TODO
+        #for enemy in self.enemies:
+            
+        
                 
         #Do input
         if game_state['keyboard']['ctrl-up']:
@@ -145,6 +151,7 @@ class PlanetState(WorldInterface):
                 elif game_state['spoon-pwr'] >= 2:
                     self.player_animator.set_anim('large_eat')
                 #Check collision with ENEMIES
+                
         else:
             self.player_can_attack = True    
         
@@ -186,7 +193,7 @@ class PlanetState(WorldInterface):
             if enemy['type'] == 3:
                 enemy['next_boat'] -= 1
                 if enemy['next_boat'] <= 0:
-                    self.spawn_miniboat(enemy['enemy'].pos)
+                    self.spawn_enemy(4, enemy['enemy'].pos)
                     enemy['next_boat'] = 40
         
         #Animate and draw enemy
@@ -214,7 +221,7 @@ class PlanetState(WorldInterface):
         #Reset enemies
         self.enemies = []
     
-        #Set up player based on SPOON PWR TODO
+        #Set up player based on SPOON PWR
         if game_state['spoon-pwr'] == 0:
             self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
             self.player_dmg = 1
@@ -229,17 +236,32 @@ class PlanetState(WorldInterface):
         
         #Set up enemy based on planet
         planet = game_state['identifier']
-        self.spawn_enemy(planet) 
+        self.planet_spawn(planet) 
         
         #set correct BG 
         self.bg.image = self.res['bgs'][planet-1]
         
-    def spawn_enemy(self, planet):
-        
-        enemy_type = randint(1,3)
+    def planet_spawn(self, planet):
+        print(planet)
+        if planet == 1:
+            self.spawn_enemy(1, Vec2(460, 320))
+        elif planet == 2:
+            self.spawn_enemy(2, Vec2(460, 320))
+        elif planet == 3:
+            self.spawn_enemy(3, Vec2(460, 320))
+        elif planet == 4:
+            self.spawn_enemy(1, Vec2(350, 120))
+            self.spawn_enemy(1, Vec2(300, 260))
+            self.spawn_enemy(1, Vec2(320, 380))
+        elif planet == 5:    
+            self.spawn_enemy(2, Vec2(320, 360))        
+            self.spawn_enemy(3, Vec2(350, 120))
+
+    def spawn_enemy(self, enemy_type, pos):
+        print("SHOULD SPAWN",enemy_type,pos.x,pos.y)
         if enemy_type == 1:
             enemy = {} #STICK
-            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100))) 
+            enemy['enemy'] = (Sprite(None, Vec2(pos.x, pos.y), (80, 100))) 
             enemy['animator'] = Animator(self.anims['enemy_stick'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
@@ -250,7 +272,7 @@ class PlanetState(WorldInterface):
             self.enemies.append(enemy)
         elif enemy_type == 2:
             enemy = {} #CONE
-            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100)))  
+            enemy['enemy'] = (Sprite(None, Vec2(pos.x, pos.y), (80, 100)))  
             enemy['animator'] = Animator(self.anims['enemy_cone'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
@@ -261,7 +283,7 @@ class PlanetState(WorldInterface):
             self.enemies.append(enemy)
         elif enemy_type == 3:
             enemy = {} #BOAT
-            enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 58))) 
+            enemy['enemy'] = (Sprite(None, Vec2(pos.x, pos.y), (80, 58))) 
             enemy['animator'] = Animator(self.anims['enemy_boat'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
@@ -271,16 +293,15 @@ class PlanetState(WorldInterface):
             enemy['hp'] = 5
             enemy['important'] = True
             self.enemies.append(enemy)
-
-    def spawn_miniboat(self, pos):
-        enemy = {}
-        enemy['enemy'] = (Sprite(None, Vec2(pos.x,pos.y), (60, 43))) 
-        enemy['animator'] = Animator(self.anims['mini_boat'], 'walk', enemy['enemy'])
-        enemy['direction'] = 0
-        enemy['next_dir'] = 0
-        enemy['speed'] = 6.0
-        enemy['type'] = 4
-        enemy['hp'] = 5
-        enemy['important'] = False
-        self.enemies.append(enemy)
+        elif enemy_type == 4:
+            enemy = {}
+            enemy['enemy'] = (Sprite(None, Vec2(pos.x,pos.y), (60, 43))) 
+            enemy['animator'] = Animator(self.anims['mini_boat'], 'walk', enemy['enemy'])
+            enemy['direction'] = 0
+            enemy['next_dir'] = 0
+            enemy['speed'] = 6.0
+            enemy['type'] = 4
+            enemy['hp'] = 5
+            enemy['important'] = False
+            self.enemies.append(enemy)
         
