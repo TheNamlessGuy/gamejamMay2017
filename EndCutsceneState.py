@@ -86,7 +86,7 @@ class EndCutsceneState(WorldInterface):
     def goto_next(self, game_state):
         self.current_state += 1
         if self.current_state not in self.states:
-            return game_state["world-gameover"]       
+            return game_state["world-splash"]       
         self.current_frame = 0
         
     def cutscene_approaching(self, game_state):
@@ -164,3 +164,5 @@ class EndCutsceneState(WorldInterface):
             self.spaceship_pos.x += self.spaceship_speed.x
             self.spaceship_pos.y += self.spaceship_speed.y
             self.sprites.append(self.local_sprites["spaceship"][self.current_frame % 2])
+            if self.current_frame > 72:
+                return self.goto_next(game_state)
