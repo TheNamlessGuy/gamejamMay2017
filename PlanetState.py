@@ -34,6 +34,9 @@ class PlanetState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
         #load all res
+        
+        
+        
         self.res = {}
         self.res['bgs'] = [load_image("res/onplanet1.png"), \
                            load_image("res/onplanet2.png"), \
@@ -64,7 +67,9 @@ class PlanetState(WorldInterface):
                                load_image("res/icecreamcone2_open.png"), \
                                load_image("res/icecreamboat1.png"), \
                                load_image("res/icecreamboat2.png"), \
-                               load_image("res/icecreamboat3.png")]
+                               load_image("res/icecreamboat3.png"), \
+                               load_image("res/icecreamsmallboat1.png"), \
+                               load_image("res/icecreamsmallboat2.png")]
                               
        
         #Animation configurations
@@ -84,8 +89,9 @@ class PlanetState(WorldInterface):
         self.anims['enemy_cone']['walk'] = (self.res['enemies'][2:4], 8, 'open')
         self.anims['enemy_cone']['open'] = (self.res['enemies'][4:6], 8, 'walk')
         self.anims['enemy_boat'] = {}   
-        self.anims['enemy_boat']['walk'] = (self.res['enemies'][6:9] + [self.res['enemies'][7]], \
-                                            6, 'walk')              
+        self.anims['enemy_boat']['walk'] = (self.res['enemies'][6:9] + [self.res['enemies'][7]], 6, 'walk')
+        self.anims['mini_boat'] = {} 
+        self.anims['mini_boat']['walk'] = (self.res['enemies'][9:11], 4, 'walk')
                
         #Ticks
         self.ticks = {}
@@ -99,9 +105,11 @@ class PlanetState(WorldInterface):
         #Player
         self.player = (Sprite(None, Vec2(150, 320), (100, 62)))
         self.player_legs = (Sprite(None, Vec2(200, 360), (100, 62)))
-        self.player_speed = 5.0
+        self.player_speed = 7.0
         self.player_can_attack = True
         self.player_next_attack = 0
+        self.player_flipped = False
+        self.player_flipped_last = False
         
         #Enemy
         self.enemies = []
@@ -122,8 +130,10 @@ class PlanetState(WorldInterface):
             self.player.pos.y -= self.player_speed;
         if game_state['keyboard']['ctrl-left']:
             self.player.pos.x -= self.player_speed;
+            self.player_flipped = True           
         if game_state['keyboard']['ctrl-right']:
             self.player.pos.x += self.player_speed;
+            self.player_flipped = False
         if game_state['keyboard']['ctrl-down']:
             self.player.pos.y += self.player_speed;
         if game_state['keyboard']['ctrl-action']:
@@ -131,6 +141,9 @@ class PlanetState(WorldInterface):
                 self.player_can_attack = False
                 self.ticks['player_attack'] = 19
                 self.player_animator.set_anim('small_eat')
+                #Check collision with ENEMIES
+                
+                
         else:
             self.player_can_attack = True    
         
@@ -164,7 +177,15 @@ class PlanetState(WorldInterface):
                 enemy['next_dir'] = 0
             if enemy['enemy'].pos.y > 420:
                 enemy['enemy'].pos.y = 420
-                enemy['next_dir'] = 0                      
+                enemy['next_dir'] = 0   
+                
+                
+            #Spawn miniboat
+            if enemy['type'] == 3:
+                enemy['next_boat'] -= 1
+                if enemy['next_boat'] <= 0:
+                    self.spawn_miniboat(enemy['enemy'].pos)
+                    enemy['next_boat'] = 40
         
         #Animate and draw enemy
         for enemy in self.enemies:
@@ -189,7 +210,7 @@ class PlanetState(WorldInterface):
         #Reset enemies
         self.enemies = []
     
-        #Set up animations
+        #Set up player based on SPOON PWR TODO
         self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
@@ -213,6 +234,8 @@ class PlanetState(WorldInterface):
             enemy['next_dir'] = 0
             enemy['speed'] = 7.0
             enemy['type'] = 1 
+            enemy['hp'] = 5
+            enemy['important'] = True
             self.enemies.append(enemy)
         elif enemy_type == 2:
             enemy = {} #CONE
@@ -221,7 +244,9 @@ class PlanetState(WorldInterface):
             enemy['direction'] = 0
             enemy['next_dir'] = 0
             enemy['speed'] = 6.0
-            enemy['type'] = 2 
+            enemy['type'] = 2
+            enemy['hp'] = 5
+            enemy['important'] = True
             self.enemies.append(enemy)
         elif enemy_type == 3:
             enemy = {} #BOAT
@@ -229,8 +254,22 @@ class PlanetState(WorldInterface):
             enemy['animator'] = Animator(self.anims['enemy_boat'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
+            enemy['next_boat'] = 40
             enemy['speed'] = 2.0
-            enemy['type'] = 3 
+            enemy['type'] = 3
+            enemy['hp'] = 5
+            enemy['important'] = True
             self.enemies.append(enemy)
 
+    def spawn_miniboat(self, pos):
+        enemy = {}
+        enemy['enemy'] = (Sprite(None, Vec2(pos.x,pos.y), (60, 43))) 
+        enemy['animator'] = Animator(self.anims['mini_boat'], 'walk', enemy['enemy'])
+        enemy['direction'] = 0
+        enemy['next_dir'] = 0
+        enemy['speed'] = 6.0
+        enemy['type'] = 4
+        enemy['hp'] = 5
+        enemy['important'] = False
+        self.enemies.append(enemy)
         
