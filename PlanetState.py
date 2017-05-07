@@ -1,6 +1,9 @@
 #encoding: utf-8
 
 from Gspace import WorldInterface, Sprite, load_image, Vec2
+from random import randint
+from math import sin, cos, radians
+
 
 class Animator():
     def __init__(self, anims, start_anim, sprite):
@@ -101,10 +104,11 @@ class PlanetState(WorldInterface):
         self.player_next_attack = 0
         
         #Enemy
-        self.enemy = (Sprite(None, Vec2(460, 320), (80, 100))) 
-        self.enemy_direction = 0
-        self.enemy_next_dir = 0
-        self.enemy_speed = 1
+        self.enemies = []
+        #self.enemy = (Sprite(None, Vec2(460, 320), (80, 100))) 
+        #self.enemy_direction = 0
+        #self.enemy_next_dir = 0
+        #self.enemy_speed = 1
         
         self.enemytemp = (Sprite(None, Vec2(150, 120), (80, 100))) 
         self.enemytemp2 = (Sprite(None, Vec2(300, 240), (80, 58))) 
@@ -147,25 +151,44 @@ class PlanetState(WorldInterface):
         
         self.player_animator.anim_update()
         self.plegs_animator.anim_update()
-        self.enemy_animator.anim_update()
-        self.enemy2_animator.anim_update()
-        self.enemy3_animator.anim_update()
-        
-        
+              
         self.sprites.append(self.player)
         self.sprites.append(self.player_legs)
         
         #Enemy think
-        #time for next dir?
-            #set new dir
+        for enemy in self.enemies:
+            #Direction
+            enemy['next_dir'] -= 1
+            if enemy['next_dir'] <= 0:
+                enemy['next_dir'] = 16
+                enemy['direction'] = randint(0,360)
+            
+            #Movement
+            enemy['enemy'].pos.x -= enemy['speed'] * sin(radians(enemy['direction']))
+            enemy['enemy'].pos.y -= enemy['speed'] * cos(radians(enemy['direction']))
+
+            #Level bounds
+            if enemy['enemy'].pos.x < 60:
+                enemy['enemy'].pos.x = 60
+                enemy['next_dir'] = 0
+            if enemy['enemy'].pos.x > 600:
+                enemy['enemy'].pos.x = 600
+                enemy['next_dir'] = 0
+            if enemy['enemy'].pos.y < 60:
+                enemy['enemy'].pos.y = 60
+                enemy['next_dir'] = 0
+            if enemy['enemy'].pos.y > 420:
+                enemy['enemy'].pos.y = 420
+                enemy['next_dir'] = 0                      
         
-        #Move enemy
-        #Do anim update
+        #Animate and Draw Enemy
+        for enemy in self.enemies:
+            enemy['animator'].anim_update()
+            self.sprites.append(enemy['enemy'])
         
-        #Draw Enemy   
-        self.sprites.append(self.enemy)
-        self.sprites.append(self.enemytemp)
-        self.sprites.append(self.enemytemp2)
+        #self.sprites.append(self.enemy)
+        #self.sprites.append(self.enemytemp)
+        #self.sprites.append(self.enemytemp2)
         
         
     def reset(self, game_state):
@@ -177,18 +200,31 @@ class PlanetState(WorldInterface):
         self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
+        #Set up enemy based on planet
+        planet = game_state['identifier']
+        self.spawn_enemy(planet)
+        
         #Stick
-        self.enemy_animator = Animator(self.anims['enemy_stick'], 'walk', self.enemy)
-        self.enemy2_animator = Animator(self.anims['enemy_cone'], 'walk', self.enemytemp)
-        self.enemy3_animator = Animator(self.anims['enemy_boat'], 'walk', self.enemytemp2)
+        #self.enemy_animator = Animator(self.anims['enemy_stick'], 'walk', self.enemy)
+        #self.enemy2_animator = Animator(self.anims['enemy_cone'], 'walk', self.enemytemp)
+        #self.enemy3_animator = Animator(self.anims['enemy_boat'], 'walk', self.enemytemp2)
         
         #reset state vars
-    
-        #set correct BG
-        planet = game_state['identifier']
+        
+        
+        #set correct BG 
         self.bg.image = self.res['bgs'][planet-1]
         
-        
-        
+    def spawn_enemy(self, planet):
+         #if planet == 1:
+        enemy = {} #STICK
+        enemy['enemy'] = (Sprite(None, Vec2(460, 320), (80, 100))) 
+        enemy['animator'] = Animator(self.anims['enemy_stick'], 'walk', enemy['enemy'])
+        enemy['direction'] = 0
+        enemy['next_dir'] = 0
+        enemy['speed'] = 7.0
+        enemy['type'] = 0 
+        self.enemies.append(enemy)
+
         
     
