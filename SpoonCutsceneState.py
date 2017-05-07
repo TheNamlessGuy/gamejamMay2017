@@ -27,7 +27,7 @@ class SpoonCutsceneState(WorldInterface):
         self.sprites = []
 
         if game_state["keyboard"]["ctrl-debug"]:
-            return game_state["world-planet"]
+            return game_state["world-cutscene"]["rising"]
 
         next_state = self.states[self.current_state](game_state)
         if next_state is not None:
@@ -44,7 +44,7 @@ class SpoonCutsceneState(WorldInterface):
     def goto_next(self, game_state):
         self.current_state += 1
         if self.current_state not in self.states:
-            return game_state["world-space"]        
+            return game_state["world-cutscene"]["rising"]        
         self.current_frame = 0
 
     def cutscene_begin(self, game_state):
