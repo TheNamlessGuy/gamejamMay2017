@@ -247,6 +247,9 @@ class PlanetState(WorldInterface):
         game_state['camera'].x = 0
         game_state['camera'].y = 0
     
+        #Reset player pos
+        self.player.pos = Vec2(150, 320)
+    
         #Reset enemies
         self.enemies = []
     
@@ -255,17 +258,17 @@ class PlanetState(WorldInterface):
             self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
             self.player_dmg = 1
             self.player_attack_hitbox_offset = Vec2(20,0)
-            self.player_attack_size = (150,100)
+            self.player_attack_size = (120,100)
         elif game_state['spoon-pwr'] == 1:
             self.player_animator = Animator(self.anims['player'], 'medium_walk', self.player)
             self.player_dmg = 3
             self.player_attack_hitbox_offset = Vec2(25,0)
-            self.player_attack_size = (30,20)
+            self.player_attack_size = (140,50)
         elif game_state['spoon-pwr'] >= 2:
             self.player_animator = Animator(self.anims['player'], 'large_walk', self.player)
             self.player_dmg = 6
             self.player_attack_hitbox_offset = Vec2(35,0)
-            self.player_attack_size = (50,30)
+            self.player_attack_size = (160,50)
             
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
@@ -298,7 +301,7 @@ class PlanetState(WorldInterface):
             enemy['animator'] = Animator(self.anims['enemy_stick'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
-            enemy['speed'] = 7.0
+            enemy['speed'] = 5.0
             enemy['type'] = 1 
             enemy['hp'] = 2
             enemy['important'] = True
@@ -312,7 +315,7 @@ class PlanetState(WorldInterface):
             enemy['animator'] = Animator(self.anims['enemy_cone'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
-            enemy['speed'] = 6.0
+            enemy['speed'] = 4.0
             enemy['type'] = 2
             enemy['hp'] = 2
             enemy['important'] = True
@@ -341,7 +344,7 @@ class PlanetState(WorldInterface):
             enemy['animator'] = Animator(self.anims['mini_boat'], 'walk', enemy['enemy'])
             enemy['direction'] = 0
             enemy['next_dir'] = 0
-            enemy['speed'] = 6.0
+            enemy['speed'] = 3.0
             enemy['type'] = 4
             enemy['hp'] = 1
             enemy['important'] = False
