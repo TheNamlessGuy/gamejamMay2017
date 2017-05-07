@@ -19,3 +19,5 @@ class SplashState(WorldInterface):
     def reset(self, game_state):
         self.sprites.append(self.gamejam)
         self.sprites.append(self.load_bar)
+        self.load_bar.pos.x = 100
+        self.load_bar.size[0] = 5
