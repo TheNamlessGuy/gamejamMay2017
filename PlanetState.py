@@ -33,10 +33,8 @@ class Animator():
 class PlanetState(WorldInterface):
     def __init__(self):
         WorldInterface.__init__(self)
+        
         #load all res
-        
-        
-        
         self.res = {}
         self.res['bgs'] = [load_image("res/onplanet1.png"), \
                            load_image("res/onplanet2.png"), \
@@ -109,7 +107,6 @@ class PlanetState(WorldInterface):
         self.player_can_attack = True
         self.player_next_attack = 0
         self.player_flipped = False
-        self.player_flipped_last = False
         
         #Enemy
         self.enemies = []
@@ -130,7 +127,7 @@ class PlanetState(WorldInterface):
             self.player.pos.y -= self.player_speed;
         if game_state['keyboard']['ctrl-left']:
             self.player.pos.x -= self.player_speed;
-            self.player_flipped = True           
+            self.player_flipped = True         
         if game_state['keyboard']['ctrl-right']:
             self.player.pos.x += self.player_speed;
             self.player_flipped = False
@@ -142,8 +139,6 @@ class PlanetState(WorldInterface):
                 self.ticks['player_attack'] = 19
                 self.player_animator.set_anim('small_eat')
                 #Check collision with ENEMIES
-                
-                
         else:
             self.player_can_attack = True    
         
@@ -151,8 +146,7 @@ class PlanetState(WorldInterface):
         if game_state['keyboard']['ctrl-debug'] and game_state['keyboard']['ctrl-right']:
             game_state['went-well'] = True
             return game_state['world-cutscene']['spoon-expansion']
-            
-        
+                    
         #Enemy think
         for enemy in self.enemies:
             #Direction
@@ -179,7 +173,6 @@ class PlanetState(WorldInterface):
                 enemy['enemy'].pos.y = 420
                 enemy['next_dir'] = 0   
                 
-                
             #Spawn miniboat
             if enemy['type'] == 3:
                 enemy['next_boat'] -= 1
@@ -192,7 +185,9 @@ class PlanetState(WorldInterface):
             enemy['animator'].anim_update()
             self.sprites.append(enemy['enemy'])
             
-        #Position legs, animate and draw player   
+        #Position legs, animate and draw player  
+        self.player.flip = self.player_flipped 
+        self.player_legs.flip = self.player_flipped
         self.player_legs.pos = self.player.pos
         
         self.player_animator.anim_update()
@@ -211,6 +206,9 @@ class PlanetState(WorldInterface):
         self.enemies = []
     
         #Set up player based on SPOON PWR TODO
+        #if game_state['spoon-pwr']
+        
+        
         self.player_animator = Animator(self.anims['player'], 'small_walk', self.player)
         self.plegs_animator = Animator(self.anims['player_legs'], 'legs_walk', self.player_legs)
         
